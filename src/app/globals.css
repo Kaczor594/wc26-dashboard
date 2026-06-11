@@ -57,6 +57,29 @@ body {
   .span-2 { grid-column: 1; }
 }
 
+/* ==== MOBILE (≤700px): rail becomes a bottom nav bar ==== */
+@media (max-width: 700px) {
+  .app { grid-template-columns: 1fr; grid-template-rows: 52px 1fr 54px; }
+  .rail { grid-row: 3; grid-column: 1; flex-direction: row; align-items: center; padding: 0 8px; border-right: 0; border-top: 1px solid var(--stone-70); padding-bottom: env(safe-area-inset-bottom); }
+  .rail-top { flex-direction: row; gap: 2px; width: 100%; justify-content: space-around; }
+  .rail-bot { display: none; }
+  .rail-logo { margin-bottom: 0; width: 32px; }
+  .rail-btn { width: 44px; height: 40px; }
+  .rail-btn.active::before { left: 8px; right: 8px; top: -7px; bottom: auto; width: auto; height: 2px; }
+  .dh { grid-row: 1; grid-column: 1; padding: 0 14px; gap: 10px; }
+  .dh-breadcrumb { display: none; }
+  .main { grid-row: 2; grid-column: 1; padding: 12px; gap: 12px; }
+  .kpi-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .kpi { padding: 11px 12px; }
+  .kpi-val { font-size: 19px; }
+  .card { padding: 13px 14px 14px; }
+  .card-title--prose { font-size: 18px; }
+  .mtable { font-size: 11.5px; }
+  .mtable th, .mtable td { padding: 7px 7px; }
+  .prob-bar { min-width: 84px; }
+  .smx-cell { min-width: 36px; padding: 3px 4px; font-size: 10px; }
+}
+
 /* ==== KPI ==== */
 .kpi-row { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 20px; }
 @media (max-width: 980px) { .kpi-row { grid-template-columns: repeat(2, minmax(0,1fr)); } }
