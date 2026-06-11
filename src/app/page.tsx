@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo } from "react";
+import { Fragment, useMemo, useState } from "react";
 import {
   Bar,
   BarChart,
@@ -14,6 +14,7 @@ import {
 import { Card, Empty } from "@/components/ui/Card";
 import { Kpi } from "@/components/ui/Kpi";
 import { ProbBar } from "@/components/ui/ProbBar";
+import { ScoreMatrix } from "@/components/ui/ScoreMatrix";
 import { usePolledJson } from "@/lib/fetcher";
 import { kickoffLocal, pct, untilKickoff } from "@/lib/format";
 import type { Match, MatchesBlob } from "@/lib/types";
@@ -61,6 +62,7 @@ function modelCell(m: Match) {
 
 export default function MatchesPage() {
   const { data } = usePolledJson<MatchesBlob>("matches");
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   const view = useMemo(() => {
     if (!data) return null;
@@ -161,35 +163,55 @@ export default function MatchesPage() {
                 </tr>
               </thead>
               <tbody>
-                {view.upcoming.slice(0, 18).map((m) => (
-                  <tr key={m.event_id} className={m.placeholder ? "dim" : "sig"}>
-                    <td className="mname" suppressHydrationWarning>
-                      {kickoffLocal(m.kickoff_utc)}
-                    </td>
-                    <td>
-                      {m.home} – {m.away}
-                      {m.divergence?.model_backs_underdog && (
-                        <>
-                          {" "}
-                          <span className="badge badge-upset">model backs dog</span>
-                        </>
+                {view.upcoming.slice(0, 18).map((m) => {
+                  const clickable =
+                    data.dc_rho != null && (m.capture || m.prelim);
+                  return (
+                    <Fragment key={m.event_id}>
+                      <tr
+                        className={`${m.placeholder ? "dim" : "sig"} ${clickable ? "expandable" : ""}`}
+                        onClick={() =>
+                          clickable &&
+                          setExpanded(expanded === m.event_id ? null : m.event_id)
+                        }
+                        title={clickable ? "click for score probabilities" : undefined}
+                      >
+                        <td className="mname" suppressHydrationWarning>
+                          {kickoffLocal(m.kickoff_utc)}
+                        </td>
+                        <td>
+                          {m.home} – {m.away}
+                          {m.divergence?.model_backs_underdog && (
+                            <>
+                              {" "}
+                              <span className="badge badge-upset">model backs dog</span>
+                            </>
+                          )}
+                        </td>
+                        <td>{m.stage}</td>
+                        <td>{modelCell(m)}</td>
+                        <td>
+                          {m.market ? (
+                            <ProbBar p={m.market.p_vigfree} context />
+                          ) : (
+                            <span className="cell-dash">—</span>
+                          )}
+                        </td>
+                        <td>{m.placeholder ? <span className="cell-dash">TBD</span> : lineupBadge(m)}</td>
+                        <td className="num">
+                          {m.excitement ? m.excitement.score.toFixed(2) : "—"}
+                        </td>
+                      </tr>
+                      {expanded === m.event_id && clickable && (
+                        <tr className="smx-row">
+                          <td colSpan={7}>
+                            <ScoreMatrix match={m} rho={data.dc_rho!} />
+                          </td>
+                        </tr>
                       )}
-                    </td>
-                    <td>{m.stage}</td>
-                    <td>{modelCell(m)}</td>
-                    <td>
-                      {m.market ? (
-                        <ProbBar p={m.market.p_vigfree} context />
-                      ) : (
-                        <span className="cell-dash">—</span>
-                      )}
-                    </td>
-                    <td>{m.placeholder ? <span className="cell-dash">TBD</span> : lineupBadge(m)}</td>
-                    <td className="num">
-                      {m.excitement ? m.excitement.score.toFixed(2) : "—"}
-                    </td>
-                  </tr>
-                ))}
+                    </Fragment>
+                  );
+                })}
               </tbody>
             </table>
           </div>

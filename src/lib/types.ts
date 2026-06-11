@@ -45,7 +45,7 @@ export interface Match {
   divergence: { tv: number; model_backs_underdog: boolean } | null;
 }
 
-export interface MatchesBlob { generated_at: string; matches: Match[] }
+export interface MatchesBlob { generated_at: string; dc_rho: number | null; matches: Match[] }
 
 export interface PerfRow {
   event_id: string;

@@ -122,6 +122,20 @@ tr.dim td.num { color: var(--fg-3); }
 .badge-waiting { color: var(--fg-3); background: var(--bg-sunken); }
 .badge-upset { color: var(--terra-50); background: var(--terra-10); }
 
+/* ==== SCORE MATRIX (expanded match row) ==== */
+tr.expandable { cursor: pointer; }
+tr.expandable:hover td { background: var(--bg-sunken); }
+tr.smx-row > td { padding: 0 10px 14px; }
+.smx { padding: 10px 0 0; max-width: 480px; }
+.smx-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 8px; }
+.smx-lam { font-size: 11px; color: var(--fg-3); }
+.smx-table { border-collapse: collapse; }
+.smx-table th { font: 500 10px var(--font-mono); color: var(--fg-3); padding: 3px 6px; text-align: right; border: 0; letter-spacing: 0.04em; }
+.smx-table th.smx-corner { text-align: left; font-size: 9px; text-transform: uppercase; }
+.smx-cell { padding: 4px 6px; text-align: right; font-size: 11px; min-width: 44px; color: var(--fg-1); border-radius: 2px; }
+.smx-best { outline: 1.5px solid var(--moss-50); outline-offset: -1.5px; }
+.smx-source { margin-top: 8px; font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-3); }
+
 /* ==== NOTICE / EMPTY ==== */
 .notice { border-radius: 6px; background: var(--terra-10); color: var(--terra-60); font-size: 13px; padding: 10px 14px; font-family: var(--font-mono); }
 .empty { padding: 36px 20px; text-align: center; color: var(--fg-3); }
