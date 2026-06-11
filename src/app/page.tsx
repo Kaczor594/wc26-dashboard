@@ -1,0 +1,254 @@
+"use client";
+
+import { useMemo } from "react";
+import {
+  Bar,
+  BarChart,
+  Cell,
+  LabelList,
+  ReferenceLine,
+  ResponsiveContainer,
+  XAxis,
+  YAxis,
+} from "recharts";
+import { Card, Empty } from "@/components/ui/Card";
+import { Kpi } from "@/components/ui/Kpi";
+import { ProbBar } from "@/components/ui/ProbBar";
+import { usePolledJson } from "@/lib/fetcher";
+import { kickoffLocal, pct, untilKickoff } from "@/lib/format";
+import type { Match, MatchesBlob } from "@/lib/types";
+
+function lineupBadge(m: Match) {
+  if (m.capture) {
+    return m.capture.lineup_confirmed ? (
+      <span className="badge badge-confirmed">XI confirmed</span>
+    ) : (
+      <span className="badge badge-prior">prior minutes</span>
+    );
+  }
+  return <span className="badge badge-waiting">awaiting capture</span>;
+}
+
+export default function MatchesPage() {
+  const { data } = usePolledJson<MatchesBlob>("matches");
+
+  const view = useMemo(() => {
+    if (!data) return null;
+    const now = Date.now();
+    const upcoming = data.matches.filter(
+      (m) => m.status !== "final" && new Date(m.kickoff_utc).getTime() > now - 3 * 3600_000,
+    );
+    const next = upcoming.find((m) => !m.placeholder);
+    const capturedToday = data.matches.filter(
+      (m) =>
+        m.capture &&
+        new Date(m.capture.ts_utc).toDateString() === new Date().toDateString(),
+    ).length;
+    const lastBooks = data.matches
+      .filter((m) => m.market)
+      .map((m) => m.market!.n_books)
+      .at(-1);
+    const flagged = upcoming.filter((m) => m.divergence?.model_backs_underdog);
+    const maxDiv = upcoming
+      .filter((m) => m.divergence)
+      .sort((a, b) => b.divergence!.tv - a.divergence!.tv)[0];
+    const excitement = upcoming
+      .filter((m) => m.excitement && !m.placeholder)
+      .sort((a, b) => b.excitement!.score - a.excitement!.score)
+      .slice(0, 10)
+      .map((m) => ({
+        name: `${m.home} – ${m.away}`,
+        score: +(m.excitement!.score).toFixed(3),
+        basis: m.excitement!.basis,
+      }));
+    const divergences = upcoming
+      .filter((m) => m.divergence)
+      .sort((a, b) => b.divergence!.tv - a.divergence!.tv)
+      .slice(0, 12)
+      .map((m) => ({
+        name: `${m.home} – ${m.away}`,
+        tv: +(m.divergence!.tv).toFixed(3),
+        upset: m.divergence!.model_backs_underdog,
+      }));
+    return { upcoming, next, capturedToday, lastBooks, flagged, maxDiv, excitement, divergences };
+  }, [data]);
+
+  if (!data || !view) {
+    return (
+      <Card className="span-2" eyebrow="Matches">
+        <Empty title="Connecting to the model feed" sub="data refreshes every 60 s" />
+      </Card>
+    );
+  }
+
+  return (
+    <>
+      <div className="kpi-row span-2">
+        <Kpi
+          label="Next kickoff"
+          value={view.next ? untilKickoff(view.next.kickoff_utc) : "—"}
+          delta={view.next ? `${view.next.home} – ${view.next.away}` : undefined}
+        />
+        <Kpi label="Captured today" value={String(view.capturedToday)} unit="matches" />
+        <Kpi
+          label="Books reporting"
+          value={view.lastBooks != null ? String(view.lastBooks) : "—"}
+          delta="EU region, The Odds API"
+        />
+        <Kpi
+          label="Biggest model–market gap"
+          value={view.maxDiv ? pct(view.maxDiv.divergence!.tv, 1) : "—"}
+          tone={view.flagged.length > 0 ? "neg" : undefined}
+          delta={
+            view.maxDiv
+              ? `${view.maxDiv.home} – ${view.maxDiv.away}`
+              : "needs capture + odds"
+          }
+        />
+      </div>
+
+      <Card
+        className="span-2"
+        eyebrow="Upcoming matches"
+        title="Model and market, side by side, as captures come in."
+        prose
+        source={`Model: lineup-conditioned capture at T−45 · market: vig-free median of EU books · kickoff in your local time · updated ${new Date(data.generated_at).toLocaleTimeString()}`}
+      >
+        {view.upcoming.length === 0 ? (
+          <Empty title="No matches on the horizon" />
+        ) : (
+          <div className="table-scroll">
+            <table className="mtable">
+              <thead>
+                <tr>
+                  <th>Kickoff</th>
+                  <th>Fixture</th>
+                  <th>Stage</th>
+                  <th>Model W·D·L</th>
+                  <th>Market W·D·L</th>
+                  <th>Lineups</th>
+                  <th className="num">Excite</th>
+                </tr>
+              </thead>
+              <tbody>
+                {view.upcoming.slice(0, 18).map((m) => (
+                  <tr key={m.event_id} className={m.placeholder ? "dim" : "sig"}>
+                    <td className="mname" suppressHydrationWarning>
+                      {kickoffLocal(m.kickoff_utc)}
+                    </td>
+                    <td>
+                      {m.home} – {m.away}
+                      {m.divergence?.model_backs_underdog && (
+                        <>
+                          {" "}
+                          <span className="badge badge-upset">model backs dog</span>
+                        </>
+                      )}
+                    </td>
+                    <td>{m.stage}</td>
+                    <td>
+                      {m.capture ? (
+                        <ProbBar p={m.capture.p} />
+                      ) : (
+                        <span className="cell-dash">—</span>
+                      )}
+                    </td>
+                    <td>
+                      {m.market ? (
+                        <ProbBar p={m.market.p_vigfree} context />
+                      ) : (
+                        <span className="cell-dash">—</span>
+                      )}
+                    </td>
+                    <td>{m.placeholder ? <span className="cell-dash">TBD</span> : lineupBadge(m)}</td>
+                    <td className="num">
+                      {m.excitement ? m.excitement.score.toFixed(2) : "—"}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
+      </Card>
+
+      <Card
+        eyebrow="Excitement index"
+        title="The fixtures worth setting an alarm for."
+        prose
+        source="excitement = quality × closeness · quality: min–max scaled mean team rating · closeness: H(p)/ln 3 from market (else model) probs, or Elo gap pre-capture"
+      >
+        {view.excitement.length === 0 ? (
+          <Empty title="Nothing to rank yet" />
+        ) : (
+          <ResponsiveContainer width="100%" height={Math.max(200, view.excitement.length * 32)}>
+            <BarChart data={view.excitement} layout="vertical" margin={{ left: 8, right: 44 }}>
+              <XAxis type="number" hide domain={[0, 1]} />
+              <YAxis
+                type="category"
+                dataKey="name"
+                width={170}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 11 }}
+              />
+              <Bar dataKey="score" fill="var(--moss-30)" radius={[0, 2, 2, 0]} barSize={16}>
+                <LabelList
+                  dataKey="score"
+                  position="right"
+                  style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-2)" }}
+                />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
+
+      <Card
+        eyebrow="Model vs market"
+        title={
+          view.flagged.length > 0
+            ? `The model backs the underdog in ${view.flagged.length} upcoming ${view.flagged.length === 1 ? "match" : "matches"}.`
+            : "No upset calls on the board yet."
+        }
+        prose
+        source="total variation distance 0.5·Σ|p_model − p_market| per captured match · terracotta = model's favourite is the market's underdog"
+      >
+        {view.divergences.length === 0 ? (
+          <Empty
+            title="Needs a capture and odds"
+            sub="the agent arms 55 minutes before each kickoff"
+          />
+        ) : (
+          <ResponsiveContainer width="100%" height={Math.max(200, view.divergences.length * 32)}>
+            <BarChart data={view.divergences} layout="vertical" margin={{ left: 8, right: 44 }}>
+              <XAxis type="number" hide />
+              <YAxis
+                type="category"
+                dataKey="name"
+                width={170}
+                tickLine={false}
+                axisLine={false}
+                tick={{ fontSize: 11 }}
+              />
+              <ReferenceLine x={0} stroke="var(--chart-axis)" />
+              <Bar dataKey="tv" radius={[0, 2, 2, 0]} barSize={16}>
+                {view.divergences.map((d) => (
+                  <Cell
+                    key={d.name}
+                    fill={d.upset ? "var(--terra-40)" : "var(--stone-30)"}
+                  />
+                ))}
+                <LabelList
+                  dataKey="tv"
+                  position="right"
+                  style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-2)" }}
+                />
+              </Bar>
+            </BarChart>
+          </ResponsiveContainer>
+        )}
+      </Card>
+    </>
+  );
+}
