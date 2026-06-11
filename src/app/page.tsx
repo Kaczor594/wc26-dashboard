@@ -29,6 +29,36 @@ function lineupBadge(m: Match) {
   return <span className="badge badge-waiting">awaiting capture</span>;
 }
 
+/** Final (lineup capture) prediction when present; preliminary
+ *  (current-ratings prior) otherwise — both shown once final exists. */
+function modelCell(m: Match) {
+  if (m.capture) {
+    return (
+      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <ProbBar p={m.capture.p} />
+          <span className="badge badge-confirmed">final</span>
+        </div>
+        {m.prelim && (
+          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+            <ProbBar p={m.prelim.p} context />
+            <span className="badge badge-waiting">prelim</span>
+          </div>
+        )}
+      </div>
+    );
+  }
+  if (m.prelim) {
+    return (
+      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+        <ProbBar p={m.prelim.p} />
+        <span className="badge badge-waiting">prelim</span>
+      </div>
+    );
+  }
+  return <span className="cell-dash">—</span>;
+}
+
 export default function MatchesPage() {
   const { data } = usePolledJson<MatchesBlob>("matches");
 
@@ -112,7 +142,7 @@ export default function MatchesPage() {
         eyebrow="Upcoming matches"
         title="Model and market, side by side, as captures come in."
         prose
-        source={`Model: lineup-conditioned capture at T−45 · market: vig-free median of EU books · kickoff in your local time · updated ${new Date(data.generated_at).toLocaleTimeString()}`}
+        source={`prelim: prior-based prediction from current ratings, refreshed as the model updates · final: lineup-conditioned capture at T−45 · market: vig-free median of EU books · kickoff in your local time · updated ${new Date(data.generated_at).toLocaleTimeString()}`}
       >
         {view.upcoming.length === 0 ? (
           <Empty title="No matches on the horizon" />
@@ -146,13 +176,7 @@ export default function MatchesPage() {
                       )}
                     </td>
                     <td>{m.stage}</td>
-                    <td>
-                      {m.capture ? (
-                        <ProbBar p={m.capture.p} />
-                      ) : (
-                        <span className="cell-dash">—</span>
-                      )}
-                    </td>
+                    <td>{modelCell(m)}</td>
                     <td>
                       {m.market ? (
                         <ProbBar p={m.market.p_vigfree} context />

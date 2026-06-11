@@ -39,6 +39,7 @@ export interface Match {
   score: { home: number; away: number; winner: string | null } | null;
   capture: Capture | null;
   market: Market | null;
+  prelim: { p: Probs; lambda: { home: number; away: number } } | null;
   rating_prior: { home: number; away: number } | null;
   excitement: { score: number; closeness: number; quality: number; basis: string } | null;
   divergence: { tv: number; model_backs_underdog: boolean } | null;
