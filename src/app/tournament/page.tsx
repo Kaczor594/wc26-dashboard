@@ -69,8 +69,10 @@ export default function TournamentPage() {
       {meta && meta.results_since_sim > 0 && (
         <div className="notice span-2">
           Simulation from {simDate.toLocaleString()} — {meta.results_since_sim}{" "}
-          result{meta.results_since_sim === 1 ? "" : "s"} since. Re-run
-          src/run_all.R to refresh; the dashboard picks it up automatically.
+          result{meta.results_since_sim === 1 ? "" : "s"} since. A refresh
+          normally runs automatically within minutes of each final whistle;
+          if this notice persists, the auto-refresh failed (check the agent
+          log).
         </div>
       )}
 
