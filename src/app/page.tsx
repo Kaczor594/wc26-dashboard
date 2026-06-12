@@ -18,7 +18,8 @@ import { ScoreMatrix } from "@/components/ui/ScoreMatrix";
 import { usePolledJson } from "@/lib/fetcher";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { kickoffLocal, pct, untilKickoff } from "@/lib/format";
-import type { Match, MatchesBlob } from "@/lib/types";
+import { chartLabelStyle } from "@/lib/chartStyles";
+import type { Match, MatchesBlob, Probs } from "@/lib/types";
 
 function lineupBadge(m: Match) {
   if (m.capture) {
@@ -47,33 +48,34 @@ function divergenceTitle(
 }
 
 /** Final (lineup capture) prediction when present; preliminary
- *  (current-ratings prior) otherwise — both shown once final exists. */
-function modelCell(m: Match) {
+ *  (current-ratings prior) otherwise — both shown once final exists.
+ *  Single source for the desktop cell and the mobile card rows. */
+function modelRows(m: Match) {
+  const rows: { label: "final" | "prelim"; p: Probs; context: boolean }[] = [];
   if (m.capture) {
-    return (
-      <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-        <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-          <ProbBar p={m.capture.p} />
-          <span className="badge badge-confirmed">final</span>
+    rows.push({ label: "final", p: m.capture.p, context: false });
+    if (m.prelim) rows.push({ label: "prelim", p: m.prelim.p, context: true });
+  } else if (m.prelim) {
+    rows.push({ label: "prelim", p: m.prelim.p, context: false });
+  }
+  return rows;
+}
+
+function modelCell(m: Match) {
+  const rows = modelRows(m);
+  if (rows.length === 0) return <span className="cell-dash">—</span>;
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+      {rows.map((r) => (
+        <div key={r.label} style={{ display: "flex", alignItems: "center", gap: 8 }}>
+          <ProbBar p={r.p} context={r.context} />
+          <span className={`badge ${r.label === "final" ? "badge-confirmed" : "badge-waiting"}`}>
+            {r.label}
+          </span>
         </div>
-        {m.prelim && (
-          <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-            <ProbBar p={m.prelim.p} context />
-            <span className="badge badge-waiting">prelim</span>
-          </div>
-        )}
-      </div>
-    );
-  }
-  if (m.prelim) {
-    return (
-      <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-        <ProbBar p={m.prelim.p} />
-        <span className="badge badge-waiting">prelim</span>
-      </div>
-    );
-  }
-  return <span className="cell-dash">—</span>;
+      ))}
+    </div>
+  );
 }
 
 export default function MatchesPage() {
@@ -204,25 +206,12 @@ export default function MatchesPage() {
                       <span className="badge badge-upset">model backs dog</span>
                     )}
                   </div>
-                  {m.capture ? (
-                    <>
-                      <div className="mcard-row">
-                        <span className="mcard-lbl">model</span>
-                        <ProbBar p={m.capture.p} />
-                      </div>
-                      {m.prelim && (
-                        <div className="mcard-row">
-                          <span className="mcard-lbl">prelim</span>
-                          <ProbBar p={m.prelim.p} context />
-                        </div>
-                      )}
-                    </>
-                  ) : m.prelim ? (
-                    <div className="mcard-row">
-                      <span className="mcard-lbl">prelim</span>
-                      <ProbBar p={m.prelim.p} />
+                  {modelRows(m).map((r) => (
+                    <div className="mcard-row" key={r.label}>
+                      <span className="mcard-lbl">{r.label}</span>
+                      <ProbBar p={r.p} context={r.context} />
                     </div>
-                  ) : null}
+                  ))}
                   {m.market && (
                     <div className="mcard-row">
                       <span className="mcard-lbl">market</span>
@@ -344,11 +333,7 @@ export default function MatchesPage() {
                 tick={{ fontSize: isMobile ? 9.5 : 11 }}
               />
               <Bar dataKey="score" fill="var(--moss-30)" radius={[0, 2, 2, 0]} barSize={16}>
-                <LabelList
-                  dataKey="score"
-                  position="right"
-                  style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-2)" }}
-                />
+                <LabelList dataKey="score" position="right" style={chartLabelStyle} />
               </Bar>
             </BarChart>
           </ResponsiveContainer>
@@ -396,7 +381,7 @@ export default function MatchesPage() {
                 <LabelList
                   dataKey="call"
                   position="right"
-                  style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-1)" }}
+                  style={{ ...chartLabelStyle, fill: "var(--fg-1)" }}
                 />
               </Bar>
             </BarChart>

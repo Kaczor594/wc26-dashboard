@@ -8,8 +8,11 @@ its CLAUDE.md + CLAUDE_HANDOFF.md) — this repo is the frontend only.
 ## Architecture
 - Next.js 16 App Router + React 19 + TS + Tailwind v4 + Recharts. No
   backend: route handlers at `src/app/api/data/[file]` proxy 5 JSON blobs
-  from Vercel Blob (`BLOB_BASE_URL` env, 60s revalidate); pages poll
-  every 60s via `src/lib/fetcher.ts`.
+  from Vercel Blob (`BLOB_BASE_URL` env) with `cache: "no-store"` on the
+  upstream fetch — the Data Cache once pinned a stale blob for 7 hours, so
+  freshness lives in the response header (`max-age=30, s-maxage=60`)
+  instead. Pages poll every 60s via `src/lib/fetcher.ts`.
+- Vercel Web Analytics enabled (`<Analytics />` in `layout.tsx`).
 - Data contract: `src/lib/types.ts` mirrors
   `worldcup-2026-model/scripts/publish_dashboard.py` (schema_version 1).
   Change them together.
@@ -39,9 +42,21 @@ its CLAUDE.md + CLAUDE_HANDOFF.md) — this repo is the frontend only.
   `npx vercel --prod`.
 - `.env.local`: `BLOB_BASE_URL=https://lpk0kojgqwo5via5.public.blob.vercel-storage.com`
 
+## Mobile
+- Phones get a card stack (`.only-mobile` / `.only-desktop` helpers in
+  globals.css — the `display` overrides need `!important` inside the media
+  queries) and a fixed bottom nav rail. App shell uses `100dvh` (not
+  `100vh`, which broke under iOS/Android collapsing toolbars) +
+  `viewport-fit=cover` + safe-area padding. `src/lib/useIsMobile.ts`
+  drives chart sizing.
+
 ## Key files
-- `src/app/page.tsx` — Matches (upcoming + prelim/final predictions, excitement, divergence)
+- `src/app/page.tsx` — Matches (prelim/final predictions, excitement,
+  divergence calls, expandable score-probability matrix per row)
 - `src/app/performance/page.tsx` — Brier/log model-vs-market log
 - `src/app/tournament/page.tsx` — sim probabilities + staleness banner
-- `src/app/players/page.tsx` — minutes-deficit analysis
-- `src/components/ui/` — Card/Kpi/ProbBar primitives (kit ports)
+  (auto-refresh runs in the agent; banner persisting = refresh failed)
+- `src/app/players/page.tsx` — minutes-deficit analysis (ESPN-derived minutes)
+- `src/components/ui/` — Card/Kpi/ProbBar/ScoreMatrix primitives (kit ports)
+- `src/lib/scoreMatrix.ts` — Dixon-Coles score grid (mirrors the R model)
+- `src/lib/chartStyles.ts` — shared chart label/tooltip styles

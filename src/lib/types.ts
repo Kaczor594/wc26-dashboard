@@ -23,6 +23,7 @@ export interface Capture {
 
 export interface Market {
   n_books: number;
+  as_of: string | null;
   consensus_odds: Probs | null;
   p_vigfree: Probs;
 }

@@ -18,6 +18,7 @@ import { Card, Empty } from "@/components/ui/Card";
 import { usePolledJson } from "@/lib/fetcher";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { num } from "@/lib/format";
+import { chartLabelStyle, chartTooltipStyle } from "@/lib/chartStyles";
 import type { PlayersBlob } from "@/lib/types";
 
 export default function PlayersPage() {
@@ -111,7 +112,7 @@ export default function PlayersPage() {
                   dataKey="deficit"
                   position="right"
                   formatter={(v) => `${String(v)}′`}
-                  style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-2)" }}
+                  style={chartLabelStyle}
                 />
               </Bar>
             </BarChart>
@@ -157,16 +158,7 @@ export default function PlayersPage() {
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               content={({ payload }: any) =>
                 payload?.length ? (
-                  <div
-                    style={{
-                      background: "var(--bg-inverse)",
-                      color: "var(--fg-on-inverse)",
-                      borderRadius: 6,
-                      padding: "6px 9px",
-                      fontFamily: "var(--font-mono)",
-                      fontSize: 11,
-                    }}
-                  >
+                  <div style={{ ...chartTooltipStyle, padding: "6px 9px" }}>
                     {payload[0].payload.name} · exp {payload[0].payload.x} · act{" "}
                     {payload[0].payload.y}
                   </div>

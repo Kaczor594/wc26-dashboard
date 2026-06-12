@@ -13,6 +13,7 @@ import { Card, Empty } from "@/components/ui/Card";
 import { usePolledJson } from "@/lib/fetcher";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { pct } from "@/lib/format";
+import { chartLabelStyle } from "@/lib/chartStyles";
 import type { Meta, TournamentBlob, TournamentTeam } from "@/lib/types";
 
 const STAGES = [
@@ -105,7 +106,7 @@ export default function TournamentPage() {
                 dataKey="p"
                 position="right"
                 formatter={(v) => `${String(v)}%`}
-                style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-2)" }}
+                style={chartLabelStyle}
               />
             </Bar>
           </BarChart>

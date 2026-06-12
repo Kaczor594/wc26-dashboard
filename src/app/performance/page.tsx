@@ -18,16 +18,8 @@ import { Card, Empty } from "@/components/ui/Card";
 import { Kpi } from "@/components/ui/Kpi";
 import { usePolledJson } from "@/lib/fetcher";
 import { num, pct, signed } from "@/lib/format";
+import { chartTooltipStyle } from "@/lib/chartStyles";
 import type { PerformanceBlob } from "@/lib/types";
-
-const tooltipStyle = {
-  background: "var(--bg-inverse)",
-  border: "none",
-  borderRadius: 6,
-  fontFamily: "var(--font-mono)",
-  fontSize: 11,
-  color: "var(--fg-on-inverse)",
-};
 
 export default function PerformancePage() {
   const { data } = usePolledJson<PerformanceBlob>("performance");
@@ -123,7 +115,7 @@ export default function PerformancePage() {
                 width={36}
               />
               <Tooltip
-                contentStyle={tooltipStyle}
+                contentStyle={chartTooltipStyle}
                 labelFormatter={(i) =>
                   data.cumulative.find((p) => p.i === i)?.label ?? `match ${i}`
                 }
