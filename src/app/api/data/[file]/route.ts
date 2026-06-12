@@ -23,9 +23,10 @@ export async function GET(
     return NextResponse.json({ error: "BLOB_BASE_URL not set" }, { status: 503 });
   }
   try {
-    const r = await fetch(`${base}/wc26/${file}.json`, {
-      next: { revalidate: 60 },
-    });
+    // cache: "no-store" — Next's Data Cache pinned stale entries for hours
+    // (revalidation wedged during an invalid-payload episode). The blob CDN
+    // (max-age=60) + this route's s-maxage=60 are the caching layers.
+    const r = await fetch(`${base}/wc26/${file}.json`, { cache: "no-store" });
     if (!r.ok) {
       return NextResponse.json({ error: `upstream ${r.status}` }, { status: 502 });
     }
