@@ -25,11 +25,13 @@ body {
    what buried the bottom nav on iOS Safari / Android Chrome) */
 .app { display: grid; grid-template-columns: 56px 1fr; grid-template-rows: 56px 1fr; height: 100vh; height: 100dvh; }
 
-/* responsive visibility helpers */
-.only-mobile { display: none; }
+/* responsive visibility helpers — !important so later display rules on the
+   same element (e.g. .mcard-list { display:flex }) can't re-show it */
+@media (min-width: 701px) {
+  .only-mobile { display: none !important; }
+}
 @media (max-width: 700px) {
-  .only-mobile { display: block; }
-  .only-desktop { display: none; }
+  .only-desktop { display: none !important; }
 }
 
 /* ==== RAIL ==== */
