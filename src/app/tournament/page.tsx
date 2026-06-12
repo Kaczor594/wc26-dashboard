@@ -11,6 +11,7 @@ import {
 } from "recharts";
 import { Card, Empty } from "@/components/ui/Card";
 import { usePolledJson } from "@/lib/fetcher";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { pct } from "@/lib/format";
 import type { Meta, TournamentBlob, TournamentTeam } from "@/lib/types";
 
@@ -41,6 +42,7 @@ export default function TournamentPage() {
   const { data } = usePolledJson<TournamentBlob>("tournament");
   const { data: meta } = usePolledJson<Meta>("meta");
   const [sortKey, setSortKey] = useState<SortKey>("p_champion");
+  const isMobile = useIsMobile();
 
   const teams = useMemo(() => {
     if (!data) return [];
@@ -93,10 +95,10 @@ export default function TournamentPage() {
             <YAxis
               type="category"
               dataKey="team"
-              width={110}
+              width={isMobile ? 92 : 110}
               tickLine={false}
               axisLine={false}
-              tick={{ fontSize: 11.5 }}
+              tick={{ fontSize: isMobile ? 10 : 11.5 }}
             />
             <Bar dataKey="p" fill="var(--moss-40)" barSize={16} radius={[0, 2, 2, 0]} isAnimationActive={false}>
               <LabelList
@@ -118,7 +120,7 @@ export default function TournamentPage() {
         source="click a column to sort · bars share a 0–100% scale within each column · rating = 0.5·player-implied + 0.5·actual Elo"
       >
         <div className="table-scroll">
-          <table className="mtable">
+          <table className="mtable sticky-first">
             <thead>
               <tr>
                 <th>Team</th>

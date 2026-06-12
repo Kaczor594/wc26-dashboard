@@ -16,6 +16,7 @@ import { Kpi } from "@/components/ui/Kpi";
 import { ProbBar } from "@/components/ui/ProbBar";
 import { ScoreMatrix } from "@/components/ui/ScoreMatrix";
 import { usePolledJson } from "@/lib/fetcher";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { kickoffLocal, pct, untilKickoff } from "@/lib/format";
 import type { Match, MatchesBlob } from "@/lib/types";
 
@@ -78,6 +79,7 @@ function modelCell(m: Match) {
 export default function MatchesPage() {
   const { data } = usePolledJson<MatchesBlob>("matches");
   const [expanded, setExpanded] = useState<string | null>(null);
+  const isMobile = useIsMobile();
 
   const view = useMemo(() => {
     if (!data) return null;
@@ -176,7 +178,82 @@ export default function MatchesPage() {
         {view.upcoming.length === 0 ? (
           <Empty title="No matches on the horizon" />
         ) : (
-          <div className="table-scroll">
+          <>
+          {/* phones: card stack, no sideways scrolling */}
+          <div className="only-mobile mcard-list">
+            {view.upcoming.slice(0, 18).map((m) => {
+              const clickable = data.dc_rho != null && (m.capture || m.prelim);
+              const open = expanded === m.event_id;
+              return (
+                <div
+                  key={m.event_id}
+                  className={`mcard ${m.placeholder ? "dim" : ""}`}
+                  onClick={() =>
+                    clickable && setExpanded(open ? null : m.event_id)
+                  }
+                >
+                  <div className="mcard-top">
+                    <span className="mcard-ko" suppressHydrationWarning>
+                      {kickoffLocal(m.kickoff_utc)}
+                    </span>
+                    <span className="eyebrow">{m.stage}</span>
+                  </div>
+                  <div className="mcard-fixture">
+                    {m.home} – {m.away}
+                    {m.divergence?.model_backs_underdog && (
+                      <span className="badge badge-upset">model backs dog</span>
+                    )}
+                  </div>
+                  {m.capture ? (
+                    <>
+                      <div className="mcard-row">
+                        <span className="mcard-lbl">model</span>
+                        <ProbBar p={m.capture.p} />
+                      </div>
+                      {m.prelim && (
+                        <div className="mcard-row">
+                          <span className="mcard-lbl">prelim</span>
+                          <ProbBar p={m.prelim.p} context />
+                        </div>
+                      )}
+                    </>
+                  ) : m.prelim ? (
+                    <div className="mcard-row">
+                      <span className="mcard-lbl">prelim</span>
+                      <ProbBar p={m.prelim.p} />
+                    </div>
+                  ) : null}
+                  {m.market && (
+                    <div className="mcard-row">
+                      <span className="mcard-lbl">market</span>
+                      <ProbBar p={m.market.p_vigfree} context />
+                    </div>
+                  )}
+                  <div className="mcard-meta">
+                    {m.placeholder ? (
+                      <span className="badge badge-waiting">TBD</span>
+                    ) : (
+                      lineupBadge(m)
+                    )}
+                    {m.excitement && (
+                      <span className="prob-nums">
+                        excite {m.excitement.score.toFixed(2)}
+                      </span>
+                    )}
+                    {clickable && (
+                      <span className="prob-nums" style={{ marginLeft: "auto" }}>
+                        {open ? "▾ scores" : "▸ scores"}
+                      </span>
+                    )}
+                  </div>
+                  {open && clickable && (
+                    <ScoreMatrix match={m} rho={data.dc_rho!} />
+                  )}
+                </div>
+              );
+            })}
+          </div>
+          <div className="only-desktop table-scroll">
             <table className="mtable">
               <thead>
                 <tr>
@@ -242,6 +319,7 @@ export default function MatchesPage() {
               </tbody>
             </table>
           </div>
+          </>
         )}
       </Card>
 
@@ -255,15 +333,15 @@ export default function MatchesPage() {
           <Empty title="Nothing to rank yet" />
         ) : (
           <ResponsiveContainer width="100%" height={Math.max(200, view.excitement.length * 32)}>
-            <BarChart data={view.excitement} layout="vertical" margin={{ left: 8, right: 44 }}>
+            <BarChart data={view.excitement} layout="vertical" margin={{ left: 4, right: isMobile ? 34 : 44 }}>
               <XAxis type="number" hide domain={[0, 1]} />
               <YAxis
                 type="category"
                 dataKey="name"
-                width={170}
+                width={isMobile ? 112 : 170}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fontSize: 11 }}
+                tick={{ fontSize: isMobile ? 9.5 : 11 }}
               />
               <Bar dataKey="score" fill="var(--moss-30)" radius={[0, 2, 2, 0]} barSize={16}>
                 <LabelList
@@ -290,15 +368,15 @@ export default function MatchesPage() {
           />
         ) : (
           <ResponsiveContainer width="100%" height={Math.max(200, view.divergences.length * 32)}>
-            <BarChart data={view.divergences} layout="vertical" margin={{ left: 8, right: 130 }}>
+            <BarChart data={view.divergences} layout="vertical" margin={{ left: 4, right: isMobile ? 96 : 130 }}>
               <XAxis type="number" hide />
               <YAxis
                 type="category"
                 dataKey="name"
-                width={170}
+                width={isMobile ? 112 : 170}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fontSize: 11 }}
+                tick={{ fontSize: isMobile ? 9.5 : 11 }}
               />
               <ReferenceLine x={0} stroke="var(--chart-axis)" />
               <Bar dataKey="edge" radius={[0, 2, 2, 0]} barSize={16}>

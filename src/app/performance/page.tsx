@@ -195,7 +195,7 @@ export default function PerformancePage() {
         source="p(actual) = probability either side assigned to the realised outcome · shootout matches score as draws (90-minute probabilities)"
       >
         <div className="table-scroll">
-          <table className="mtable">
+          <table className="mtable sticky-first">
             <thead>
               <tr>
                 <th>Fixture</th>

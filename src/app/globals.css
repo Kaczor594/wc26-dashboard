@@ -21,7 +21,16 @@ body {
   font-size: var(--text-sm);
 }
 
-.app { display: grid; grid-template-columns: 56px 1fr; grid-template-rows: 56px 1fr; height: 100vh; }
+/* 100dvh tracks the browser's collapsing toolbars (the 100vh fallback is
+   what buried the bottom nav on iOS Safari / Android Chrome) */
+.app { display: grid; grid-template-columns: 56px 1fr; grid-template-rows: 56px 1fr; height: 100vh; height: 100dvh; }
+
+/* responsive visibility helpers */
+.only-mobile { display: none; }
+@media (max-width: 700px) {
+  .only-mobile { display: block; }
+  .only-desktop { display: none; }
+}
 
 /* ==== RAIL ==== */
 .rail { grid-row: 1 / 3; grid-column: 1; background: var(--stone-90); display: flex; flex-direction: column; justify-content: space-between; padding: 10px 0; border-right: 1px solid var(--stone-70); }
@@ -57,27 +66,61 @@ body {
   .span-2 { grid-column: 1; }
 }
 
-/* ==== MOBILE (≤700px): rail becomes a bottom nav bar ==== */
+/* ==== MOBILE (≤700px): fixed overlay bottom nav, single column ==== */
 @media (max-width: 700px) {
-  .app { grid-template-columns: 1fr; grid-template-rows: 52px 1fr 54px; }
-  .rail { grid-row: 3; grid-column: 1; flex-direction: row; align-items: center; padding: 0 8px; border-right: 0; border-top: 1px solid var(--stone-70); padding-bottom: env(safe-area-inset-bottom); }
-  .rail-top { flex-direction: row; gap: 2px; width: 100%; justify-content: space-around; }
+  .app { grid-template-columns: 1fr; grid-template-rows: 52px 1fr; }
+  /* nav is position:fixed — immune to viewport-height quirks entirely */
+  .rail {
+    position: fixed; left: 0; right: 0; bottom: 0; z-index: 50;
+    grid-row: auto; grid-column: auto;
+    flex-direction: row; align-items: center; justify-content: center;
+    height: calc(56px + env(safe-area-inset-bottom));
+    padding: 0 8px env(safe-area-inset-bottom);
+    border-right: 0; border-top: 1px solid var(--stone-70);
+  }
+  .rail-top { flex-direction: row; gap: 2px; width: 100%; justify-content: space-around; align-items: center; }
   .rail-bot { display: none; }
   .rail-logo { margin-bottom: 0; width: 32px; }
-  .rail-btn { width: 44px; height: 40px; }
-  .rail-btn.active::before { left: 8px; right: 8px; top: -7px; bottom: auto; width: auto; height: 2px; }
+  .rail-btn { width: 52px; height: 44px; }
+  .rail-btn.active::before { left: 10px; right: 10px; top: -7px; bottom: auto; width: auto; height: 2px; }
   .dh { grid-row: 1; grid-column: 1; padding: 0 14px; gap: 10px; }
   .dh-breadcrumb { display: none; }
-  .main { grid-row: 2; grid-column: 1; padding: 12px; gap: 12px; }
-  .kpi-row { grid-template-columns: 1fr 1fr; gap: 12px; }
+  .main {
+    grid-row: 2; grid-column: 1; padding: 12px; gap: 12px;
+    /* clear the fixed nav */
+    padding-bottom: calc(72px + env(safe-area-inset-bottom));
+  }
+  .kpi-row { grid-template-columns: 1fr 1fr; gap: 10px; }
   .kpi { padding: 11px 12px; }
-  .kpi-val { font-size: 19px; }
+  .kpi-val { font-size: 18px; }
+  .kpi .spark { max-width: 64px; }
   .card { padding: 13px 14px 14px; }
-  .card-title--prose { font-size: 18px; }
+  .card-title--prose { font-size: 17px; }
+  .card-head { flex-wrap: wrap; }
   .mtable { font-size: 11.5px; }
   .mtable th, .mtable td { padding: 7px 7px; }
   .prob-bar { min-width: 84px; }
-  .smx-cell { min-width: 36px; padding: 3px 4px; font-size: 10px; }
+  .smx { max-width: 100%; overflow-x: auto; }
+  .smx-cell { min-width: 34px; padding: 3px 4px; font-size: 10px; }
+}
+
+/* ==== MOBILE MATCH CARDS (replace the wide table on phones) ==== */
+.mcard-list { display: flex; flex-direction: column; }
+.mcard { padding: 12px 2px; border-top: 1px solid var(--line-1); }
+.mcard:first-child { border-top: 0; }
+.mcard.dim { color: var(--fg-3); }
+.mcard-top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.mcard-ko { font-family: var(--font-mono); font-size: 11px; color: var(--fg-3); font-variant-numeric: tabular-nums; }
+.mcard-fixture { font-size: 14px; font-weight: 600; color: var(--fg-1); margin: 4px 0 8px; display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.mcard.dim .mcard-fixture { color: var(--fg-3); font-weight: 400; }
+.mcard-row { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.mcard-lbl { font-family: var(--font-mono); font-size: 9.5px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--fg-3); width: 44px; flex-shrink: 0; }
+.mcard-row .prob-bar { flex: 1; min-width: 0; }
+.mcard-meta { display: flex; gap: 10px; margin-top: 7px; align-items: center; flex-wrap: wrap; }
+
+/* sticky first column for wide tables on touch scroll */
+.sticky-first th:first-child, .sticky-first td:first-child {
+  position: sticky; left: 0; background: var(--bg-raised); z-index: 1;
 }
 
 /* ==== KPI ==== */

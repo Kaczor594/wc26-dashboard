@@ -16,12 +16,14 @@ import {
 } from "recharts";
 import { Card, Empty } from "@/components/ui/Card";
 import { usePolledJson } from "@/lib/fetcher";
+import { useIsMobile } from "@/lib/useIsMobile";
 import { num } from "@/lib/format";
 import type { PlayersBlob } from "@/lib/types";
 
 export default function PlayersPage() {
   const { data } = usePolledJson<PlayersBlob>("players");
   const [minQualityPct, setMinQualityPct] = useState(0.5);
+  const isMobile = useIsMobile();
 
   const view = useMemo(() => {
     if (!data) return null;
@@ -99,10 +101,10 @@ export default function PlayersPage() {
               <YAxis
                 type="category"
                 dataKey="name"
-                width={210}
+                width={isMobile ? 128 : 210}
                 tickLine={false}
                 axisLine={false}
-                tick={{ fontSize: 11 }}
+                tick={{ fontSize: isMobile ? 9.5 : 11 }}
               />
               <Bar dataKey="deficit" fill="var(--moss-40)" barSize={14} radius={[0, 2, 2, 0]} isAnimationActive={false}>
                 <LabelList
@@ -180,10 +182,10 @@ export default function PlayersPage() {
         eyebrow="Detail"
         title="The full comparison, player by player."
         prose
-        source="quality is a standardized score across all 1,200+ squad players · minutes from Sofascore tournament data"
+        source="quality is a standardized score across all 1,200+ squad players · minutes derived from ESPN lineups + substitution events"
       >
         <div className="table-scroll">
-          <table className="mtable">
+          <table className="mtable sticky-first">
             <thead>
               <tr>
                 <th>Player</th>
