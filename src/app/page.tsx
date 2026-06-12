@@ -101,6 +101,7 @@ export default function MatchesPage() {
         name: `${m.home} – ${m.away}`,
         tv: +(m.divergence!.tv).toFixed(3),
         upset: m.divergence!.model_backs_underdog,
+        final: m.divergence!.basis === "final",
       }));
     return { upcoming, next, capturedToday, lastBooks, flagged, maxDiv, excitement, divergences };
   }, [data]);
@@ -258,12 +259,12 @@ export default function MatchesPage() {
             : "No upset calls on the board yet."
         }
         prose
-        source="total variation distance 0.5·Σ|p_model − p_market| per captured match · terracotta = model's favourite is the market's underdog"
+        source="total variation distance 0.5·Σ|p_model − p_market| · prelim predictions vs latest odds snapshot (lighter bars) upgrade to the T−45 capture vs T−45 odds (solid) · terracotta = model's favourite is the market's underdog"
       >
         {view.divergences.length === 0 ? (
           <Empty
-            title="Needs a capture and odds"
-            sub="the agent arms 55 minutes before each kickoff"
+            title="Needs odds"
+            sub="the agent snapshots the market every 6 hours and at each capture"
           />
         ) : (
           <ResponsiveContainer width="100%" height={Math.max(200, view.divergences.length * 32)}>
@@ -283,6 +284,7 @@ export default function MatchesPage() {
                   <Cell
                     key={d.name}
                     fill={d.upset ? "var(--terra-40)" : "var(--stone-30)"}
+                    fillOpacity={d.final ? 1 : 0.5}
                   />
                 ))}
                 <LabelList
