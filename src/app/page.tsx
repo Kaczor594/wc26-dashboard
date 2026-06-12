@@ -30,6 +30,21 @@ function lineupBadge(m: Match) {
   return <span className="badge badge-waiting">awaiting capture</span>;
 }
 
+function divergenceTitle(
+  divs: { kind: string; call: string; name: string }[],
+): string {
+  if (divs.length === 0) return "No model–market disagreements yet.";
+  const n = (k: string) => divs.filter((d) => d.kind === k).length;
+  const parts: string[] = [];
+  if (n("upset") > 0)
+    parts.push(`${n("upset")} underdog call${n("upset") > 1 ? "s" : ""}`);
+  if (n("draw") > 0)
+    parts.push(`${n("draw")} draw call${n("draw") > 1 ? "s" : ""}`);
+  if (parts.length === 0)
+    return "The model and the market broadly agree — only favourite leans.";
+  return `On the board: ${parts.join(" and ")}. Biggest: ${divs[0].call} in ${divs[0].name}.`;
+}
+
 /** Final (lineup capture) prediction when present; preliminary
  *  (current-ratings prior) otherwise — both shown once final exists. */
 function modelCell(m: Match) {
@@ -264,11 +279,7 @@ export default function MatchesPage() {
 
       <Card
         eyebrow="Model vs market"
-        title={
-          view.flagged.length > 0
-            ? `The model backs the underdog in ${view.flagged.length} upcoming ${view.flagged.length === 1 ? "match" : "matches"}.`
-            : "No upset calls on the board yet."
-        }
+        title={divergenceTitle(view.divergences)}
         prose
         source="bar = how much the model overprices its strongest call vs the vig-free market, in percentage points · label names the call · terracotta = backing a market underdog · slate = backing the draw · gray = leaning further on the favourite · lighter = prelim vs odds snapshot, solid = T−45 capture vs T−45 odds"
       >
