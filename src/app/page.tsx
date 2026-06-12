@@ -95,14 +95,25 @@ export default function MatchesPage() {
       }));
     const divergences = upcoming
       .filter((m) => m.divergence)
-      .sort((a, b) => b.divergence!.tv - a.divergence!.tv)
+      .sort((a, b) => b.divergence!.edge_pp - a.divergence!.edge_pp)
       .slice(0, 12)
-      .map((m) => ({
-        name: `${m.home} – ${m.away}`,
-        tv: +(m.divergence!.tv).toFixed(3),
-        upset: m.divergence!.model_backs_underdog,
-        final: m.divergence!.basis === "final",
-      }));
+      .map((m) => {
+        const d = m.divergence!;
+        const team =
+          d.edge_outcome === "draw"
+            ? "draw"
+            : d.edge_outcome === "home"
+              ? m.home
+              : m.away;
+        const kind = d.edge_outcome === "draw" ? "draw" : d.edge_is_underdog ? "upset" : "fav";
+        return {
+          name: `${m.home} – ${m.away}`,
+          edge: +(d.edge_pp * 100).toFixed(1),
+          call: `${team} +${(d.edge_pp * 100).toFixed(1)}pp`,
+          kind,
+          final: d.basis === "final",
+        };
+      });
     return { upcoming, next, capturedToday, lastBooks, flagged, maxDiv, excitement, divergences };
   }, [data]);
 
@@ -259,7 +270,7 @@ export default function MatchesPage() {
             : "No upset calls on the board yet."
         }
         prose
-        source="total variation distance 0.5·Σ|p_model − p_market| · prelim predictions vs latest odds snapshot (lighter bars) upgrade to the T−45 capture vs T−45 odds (solid) · terracotta = model's favourite is the market's underdog"
+        source="bar = how much the model overprices its strongest call vs the vig-free market, in percentage points · label names the call · terracotta = backing a market underdog · slate = backing the draw · gray = leaning further on the favourite · lighter = prelim vs odds snapshot, solid = T−45 capture vs T−45 odds"
       >
         {view.divergences.length === 0 ? (
           <Empty
@@ -268,7 +279,7 @@ export default function MatchesPage() {
           />
         ) : (
           <ResponsiveContainer width="100%" height={Math.max(200, view.divergences.length * 32)}>
-            <BarChart data={view.divergences} layout="vertical" margin={{ left: 8, right: 44 }}>
+            <BarChart data={view.divergences} layout="vertical" margin={{ left: 8, right: 130 }}>
               <XAxis type="number" hide />
               <YAxis
                 type="category"
@@ -279,18 +290,24 @@ export default function MatchesPage() {
                 tick={{ fontSize: 11 }}
               />
               <ReferenceLine x={0} stroke="var(--chart-axis)" />
-              <Bar dataKey="tv" radius={[0, 2, 2, 0]} barSize={16}>
+              <Bar dataKey="edge" radius={[0, 2, 2, 0]} barSize={16}>
                 {view.divergences.map((d) => (
                   <Cell
                     key={d.name}
-                    fill={d.upset ? "var(--terra-40)" : "var(--stone-30)"}
-                    fillOpacity={d.final ? 1 : 0.5}
+                    fill={
+                      d.kind === "upset"
+                        ? "var(--terra-40)"
+                        : d.kind === "draw"
+                          ? "var(--sky-60)"
+                          : "var(--stone-30)"
+                    }
+                    fillOpacity={d.final ? 1 : 0.55}
                   />
                 ))}
                 <LabelList
-                  dataKey="tv"
+                  dataKey="call"
                   position="right"
-                  style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-2)" }}
+                  style={{ fontSize: 10.5, fontFamily: "var(--font-mono)", fill: "var(--fg-1)" }}
                 />
               </Bar>
             </BarChart>
