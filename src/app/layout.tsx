@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 import Rail from "@/components/shell/Rail";
 import Header from "@/components/shell/Header";
@@ -22,6 +23,7 @@ export default function RootLayout({
           <Header />
           <main className="main">{children}</main>
         </div>
+        <Analytics />
       </body>
     </html>
   );
