@@ -38,8 +38,11 @@ its CLAUDE.md + CLAUDE_HANDOFF.md) — this repo is the frontend only.
 - `npm run build` before pushing.
 - Vercel project `wc26-dashboard` (team kaczor594s-projects); canonical
   domain **wc26-dashboard-nu.vercel.app** (`wc26-dashboard.vercel.app`
-  belongs to someone else). GitHub auto-deploy on push to main; manual:
-  `npx vercel --prod`.
+  belongs to someone else). **Deploys are manual** — run `npx vercel --prod`
+  (builds + auto-aliases the canonical domain, ~30s). Pushing to `main`
+  updates GitHub but does **not** trigger a deploy: the GitHub integration
+  isn't connected, so every production deploy must be `vercel --prod` (the
+  whole deployment history is manual CLI deploys). Always run it after pushing.
 - `.env.local`: `BLOB_BASE_URL=https://lpk0kojgqwo5via5.public.blob.vercel-storage.com`
 
 ## Mobile
