@@ -2,13 +2,14 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { CalendarClock, Target, Trophy, Users } from "lucide-react";
+import { BookOpen, CalendarClock, Target, Trophy, Users } from "lucide-react";
 
 const NAV = [
   { href: "/", label: "Matches", Icon: CalendarClock },
   { href: "/performance", label: "Performance", Icon: Target },
   { href: "/tournament", label: "Tournament", Icon: Trophy },
   { href: "/players", label: "Players", Icon: Users },
+  { href: "/method", label: "Method", Icon: BookOpen },
 ];
 
 export default function Rail() {

@@ -11,6 +11,7 @@ const PAGE_NAME: Record<string, string> = {
   "/performance": "Performance",
   "/tournament": "Tournament",
   "/players": "Players",
+  "/method": "Method",
 };
 
 export default function Header() {

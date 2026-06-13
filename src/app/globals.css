@@ -213,3 +213,102 @@ tr.smx-row > td { padding: 0 10px 14px; }
 /* recharts text default */
 .recharts-text { font-family: var(--font-mono); font-size: 11px; fill: var(--chart-label); }
 .recharts-cartesian-axis-line, .recharts-cartesian-axis-tick-line { stroke: var(--chart-axis); }
+
+/* ============================================================
+   METHOD — the "how it works" explainer page.
+   Editorial prose (EB Garamond body, Fraunces titles via the kit),
+   a conceptual pipeline diagram, formula blocks, a truncated
+   backtest bar set, and definition lists. Reading-first, so the
+   measure is constrained even inside full-width cards.
+   ============================================================ */
+
+/* Prose — EB Garamond, generous leading, comfortable measure. */
+.mthd-prose, .mthd-lede { font-family: var(--font-prose); color: var(--fg-1); }
+.mthd-prose p, .mthd-lede p {
+  font-size: 16px; line-height: 1.62; color: var(--fg-1);
+  max-width: 64ch; margin: 0;
+}
+.mthd-prose p + p, .mthd-lede p + p { margin-top: 12px; }
+.mthd-prose--wide p { max-width: 78ch; }
+.mthd-prose strong { font-weight: 600; color: var(--fg-1); }
+.mthd-prose em, .mthd-lede em { font-style: italic; }
+
+/* Lede sits right under the hero title — a touch larger, warmer. */
+.mthd-lede p { font-size: 18px; line-height: 1.6; color: var(--fg-2); max-width: 70ch; }
+.mthd-hero .card-head { margin-bottom: 16px; }
+
+/* ---- pipeline flow diagram ---- */
+.mthd-flow { display: flex; align-items: stretch; gap: 0; flex-wrap: nowrap; }
+.mthd-flow-step {
+  flex: 1 1 0; min-width: 0;
+  background: var(--bg-sunken); border-radius: 6px;
+  padding: 14px 14px 16px; display: flex; flex-direction: column; gap: 6px;
+}
+.mthd-flow-num {
+  font-family: var(--font-mono); font-size: 11px; font-weight: 500;
+  letter-spacing: 0.04em; color: var(--moss-50);
+  width: 22px; height: 22px; border-radius: 999px;
+  border: 1px solid var(--moss-20); background: var(--moss-10);
+  display: flex; align-items: center; justify-content: center;
+}
+.mthd-flow-name {
+  font-family: var(--font-sans); font-size: 14px; font-weight: 600;
+  color: var(--fg-1); letter-spacing: -0.005em;
+}
+.mthd-flow-desc { font-family: var(--font-prose); font-size: 14px; line-height: 1.4; color: var(--fg-2); }
+.mthd-flow-arrow {
+  flex: 0 0 auto; align-self: center; padding: 0 10px;
+  font-family: var(--font-mono); font-size: 18px; color: var(--stone-30);
+}
+
+/* ---- formula block ---- */
+.mthd-formula {
+  margin-top: 16px; padding: 12px 14px;
+  background: var(--bg-sunken); border: 1px solid var(--line-1);
+  border-radius: var(--radius-md);
+  display: flex; flex-direction: column; gap: 5px;
+}
+.mthd-formula code {
+  background: none; border: 0; padding: 0; color: var(--fg-1);
+  font-family: var(--font-mono); font-size: 14px; letter-spacing: 0;
+  white-space: nowrap; overflow-x: auto;
+}
+.mthd-formula-note {
+  font-family: var(--font-mono); font-size: 11px; color: var(--fg-3);
+  letter-spacing: 0.01em;
+}
+
+/* ---- backtest bars (truncated, focal vs context) ---- */
+.mthd-bars { display: flex; flex-direction: column; gap: 10px; margin-top: 6px; }
+.mthd-bar-row { display: grid; grid-template-columns: 120px 1fr 52px; align-items: center; gap: 12px; }
+.mthd-bar-label { font-family: var(--font-sans); font-size: 13px; color: var(--fg-2); }
+.mthd-bar-track { position: relative; height: 16px; background: var(--bg-sunken); border-radius: 2px; overflow: hidden; }
+.mthd-bar-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--stone-30); border-radius: 2px; }
+.mthd-bar-fill.focal { background: var(--moss-40); }
+.mthd-bar-val { font-size: 13px; color: var(--fg-1); text-align: right; }
+.mthd-trunc { color: var(--terra-50); margin-right: 0.3ch; }
+
+/* ---- definition lists (caveats + glossary) ---- */
+.mthd-defs { display: flex; flex-direction: column; }
+.mthd-def { padding: 12px 0; border-top: 1px solid var(--line-1); display: flex; flex-direction: column; gap: 3px; }
+.mthd-def:first-child { border-top: 0; padding-top: 2px; }
+.mthd-def-term { font-family: var(--font-sans); font-size: 13.5px; font-weight: 600; color: var(--fg-1); }
+.mthd-def-term--mono { font-family: var(--font-mono); font-size: 12.5px; letter-spacing: 0.01em; }
+.mthd-def-body { font-family: var(--font-prose); font-size: 15px; line-height: 1.5; color: var(--fg-2); }
+
+/* ---- shared notes / footer ---- */
+.mthd-note {
+  font-family: var(--font-mono); font-size: 11.5px; line-height: 1.55;
+  color: var(--fg-3); letter-spacing: 0.01em; max-width: 80ch; margin-top: 12px;
+}
+.mthd-foot { background: transparent; box-shadow: none; padding-top: 4px; }
+.mthd-foot .mthd-note { margin-top: 0; }
+
+/* Stack the pipeline on narrow screens; rotate the connectors. */
+@media (max-width: 760px) {
+  .mthd-flow { flex-direction: column; }
+  .mthd-flow-arrow { padding: 6px 0; align-self: center; transform: rotate(90deg); }
+  .mthd-bar-row { grid-template-columns: 92px 1fr 46px; gap: 8px; }
+  .mthd-lede p { font-size: 16px; }
+  .mthd-prose p, .mthd-lede p { max-width: 100%; }
+}
