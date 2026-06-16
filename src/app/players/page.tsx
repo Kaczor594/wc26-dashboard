@@ -122,7 +122,7 @@ export default function PlayersPage() {
 
       <Card
         eyebrow="Expected vs actual"
-        title="Below the line means the coach disagrees with the model."
+        title="Off the line, the coach plays a player more (above) or less (below) than modeled."
         prose
         source="x: model-expected share of 90 · y: actual share across games played · line: playing exactly as modeled"
       >
