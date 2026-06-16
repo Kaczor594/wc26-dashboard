@@ -91,11 +91,6 @@ export default function MatchesPage() {
       (m) => m.status !== "final" && new Date(m.kickoff_utc).getTime() > now - 3 * 3600_000,
     );
     const next = upcoming.find((m) => !m.placeholder);
-    const capturedToday = data.matches.filter(
-      (m) =>
-        m.capture &&
-        new Date(m.capture.ts_utc).toDateString() === new Date().toDateString(),
-    ).length;
     const lastBooks = data.matches
       .filter((m) => m.market)
       .map((m) => m.market!.n_books)
@@ -133,7 +128,7 @@ export default function MatchesPage() {
           final: d.basis === "final",
         };
       });
-    return { upcoming, next, capturedToday, lastBooks, maxDiv, excitement, divergences };
+    return { upcoming, next, lastBooks, maxDiv, excitement, divergences };
   }, [data]);
 
   if (!data || !view) {
