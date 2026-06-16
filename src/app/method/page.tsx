@@ -346,6 +346,64 @@ export default function MethodPage() {
         </div>
       </Card>
 
+      {/* How it's built — system / pipeline --------------------------- */}
+      <Card
+        className="span-2"
+        eyebrow="How it's built"
+        title="A live pipeline, not a static page — every result re-runs it end to end."
+        prose
+        source="Each stage runs automatically · the dashboard only ever reads the published output"
+      >
+        <div className="mthd-arch">
+          <div className="mthd-arch-node">
+            <span className="mthd-arch-k">Ingest</span>
+            <span className="mthd-arch-name">ESPN lineups + results</span>
+            <span className="mthd-arch-desc">
+              A matchday agent polls confirmed elevens and final scores.
+            </span>
+          </div>
+          <span className="mthd-arch-arrow">→</span>
+          <div className="mthd-arch-node">
+            <span className="mthd-arch-k">Model</span>
+            <span className="mthd-arch-name">Python + R</span>
+            <span className="mthd-arch-desc">
+              Players re-rated, teams rebuilt, the match and tournament models
+              re-run.
+            </span>
+          </div>
+          <span className="mthd-arch-arrow">→</span>
+          <div className="mthd-arch-node">
+            <span className="mthd-arch-k">Publish</span>
+            <span className="mthd-arch-name">JSON snapshots</span>
+            <span className="mthd-arch-desc">
+              Five versioned blobs written to storage on every tick.
+            </span>
+          </div>
+          <span className="mthd-arch-arrow">→</span>
+          <div className="mthd-arch-node">
+            <span className="mthd-arch-k">Serve</span>
+            <span className="mthd-arch-name">This dashboard</span>
+            <span className="mthd-arch-desc">
+              A Next.js front end polls the snapshots and renders them live.
+            </span>
+          </div>
+        </div>
+        <div className="mthd-stack">
+          {["Python", "R", "SQLite", "Next.js", "TypeScript", "Vercel"].map((t) => (
+            <span className="mthd-chip" key={t}>
+              {t}
+            </span>
+          ))}
+        </div>
+        <p className="mthd-note">
+          The whole system is hand-built and runs unattended: the statistical
+          models (Python and R), the agent that ingests lineups and scores, the
+          publish step, and this TypeScript dashboard — the same data-modelling,
+          pipeline and visualisation work that sits behind any production
+          analytics system.
+        </p>
+      </Card>
+
       {/* Backtest validation ------------------------------------------- */}
       <Card
         className="span-2"

@@ -17,9 +17,9 @@ import { ProbBar } from "@/components/ui/ProbBar";
 import { ScoreMatrix } from "@/components/ui/ScoreMatrix";
 import { usePolledJson } from "@/lib/fetcher";
 import { useIsMobile } from "@/lib/useIsMobile";
-import { kickoffLocal, pct, untilKickoff } from "@/lib/format";
+import { kickoffLocal, num, pct, untilKickoff } from "@/lib/format";
 import { chartLabelStyle } from "@/lib/chartStyles";
-import type { Match, MatchesBlob, Probs } from "@/lib/types";
+import type { Match, MatchesBlob, PerformanceBlob, Probs } from "@/lib/types";
 
 function lineupBadge(m: Match) {
   if (m.capture) {
@@ -80,6 +80,7 @@ function modelCell(m: Match) {
 
 export default function MatchesPage() {
   const { data } = usePolledJson<MatchesBlob>("matches");
+  const { data: perf } = usePolledJson<PerformanceBlob>("performance");
   const [expanded, setExpanded] = useState<string | null>(null);
   const isMobile = useIsMobile();
 
@@ -144,6 +145,11 @@ export default function MatchesPage() {
     );
   }
 
+  const perfLast = perf?.cumulative.at(-1);
+  const perfN = perf?.rows.filter((r) => r.market_p).length ?? 0;
+  const mBrier = perfLast?.mean_brier_model;
+  const kBrier = perfLast?.mean_brier_market;
+
   return (
     <>
       <div className="kpi-row span-2">
@@ -152,7 +158,22 @@ export default function MatchesPage() {
           value={view.next ? untilKickoff(view.next.kickoff_utc) : "—"}
           delta={view.next ? `${view.next.home} – ${view.next.away}` : undefined}
         />
-        <Kpi label="Captured today" value={String(view.capturedToday)} unit="matches" />
+        <Kpi
+          label="Model vs market"
+          value={mBrier != null ? num(mBrier, 3) : "—"}
+          tone={
+            mBrier != null && kBrier != null
+              ? mBrier <= kBrier
+                ? "pos"
+                : "neg"
+              : undefined
+          }
+          delta={
+            mBrier != null && kBrier != null
+              ? `Brier · market ${num(kBrier, 3)} · n=${perfN}`
+              : "scored after the first results"
+          }
+        />
         <Kpi
           label="Books reporting"
           value={view.lastBooks != null ? String(view.lastBooks) : "—"}

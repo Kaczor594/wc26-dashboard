@@ -304,6 +304,55 @@ tr.smx-row > td { padding: 0 10px 14px; }
 .mthd-foot { background: transparent; box-shadow: none; padding-top: 4px; }
 .mthd-foot .mthd-note { margin-top: 0; }
 
+/* ---- "how it's built" architecture flow ---- */
+.mthd-arch { display: flex; align-items: stretch; gap: 0; flex-wrap: nowrap; }
+.mthd-arch-node {
+  flex: 1 1 0; min-width: 0;
+  background: var(--bg-sunken); border-radius: 6px; padding: 12px 14px;
+  display: flex; flex-direction: column; gap: 5px;
+}
+.mthd-arch-k {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
+  text-transform: uppercase; color: var(--moss-50);
+}
+.mthd-arch-name { font-family: var(--font-sans); font-size: 13.5px; font-weight: 600; color: var(--fg-1); }
+.mthd-arch-desc { font-family: var(--font-prose); font-size: 13px; line-height: 1.4; color: var(--fg-2); }
+.mthd-arch-arrow {
+  flex: 0 0 auto; align-self: center; padding: 0 10px;
+  font-family: var(--font-mono); font-size: 16px; color: var(--stone-30);
+}
+.mthd-stack { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 14px; }
+.mthd-chip {
+  font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em;
+  text-transform: uppercase; color: var(--fg-2); background: var(--bg-sunken);
+  border-radius: 3px; padding: 3px 8px;
+}
+
+/* ---- site-wide colophon footer ---- */
+.site-foot {
+  display: flex; align-items: flex-end; justify-content: space-between;
+  gap: 16px; flex-wrap: wrap;
+  margin-top: 4px; padding-top: 16px;
+  border-top: 1px solid var(--line-1);
+}
+.site-foot-l { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.site-foot-name { font-family: var(--font-display); font-size: 16px; color: var(--fg-1); letter-spacing: -0.01em; }
+.site-foot-tag { font-family: var(--font-prose); font-size: 13.5px; color: var(--fg-3); line-height: 1.4; max-width: 52ch; }
+.site-foot-r { display: flex; align-items: center; gap: 14px; }
+.site-foot-stack {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--fg-3);
+}
+.site-foot-link {
+  font-family: var(--font-mono); font-size: 11px; letter-spacing: 0.06em;
+  text-transform: uppercase;
+}
+@media (max-width: 760px) {
+  .mthd-arch { flex-direction: column; }
+  .mthd-arch-arrow { padding: 6px 0; align-self: center; transform: rotate(90deg); }
+  .site-foot { flex-direction: column; align-items: flex-start; gap: 10px; }
+}
+
 /* Stack the pipeline on narrow screens; rotate the connectors. */
 @media (max-width: 760px) {
   .mthd-flow { flex-direction: column; }
