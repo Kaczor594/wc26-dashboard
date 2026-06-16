@@ -101,12 +101,20 @@ cluttering the casual view:
   no external font fetch (keeps the build deterministic), brand palette, reuses
   the rail `ik` mark. `metadataBase` added to `layout.tsx` so the URL resolves.
 - **Matches KPI swap** — "Captured today" replaced with **"Model vs market"**
-  (running model vs vig-free-market Brier + n, green when model ≤ market),
-  sourced from the performance blob (now polled on the Matches page too). Leads
-  with the strongest validation signal instead of an often-zero op stat.
-- Design audited against the kaczor-design rules; all compliant. **Open item:**
-  the 4 arch stage labels are in **moss** (echoing `.mthd-flow-num`), a mild
-  expansion of moss-as-focal — left as-is pending Isaac's review.
+  (running model vs vig-free-market Brier + n), sourced from the performance
+  blob (now polled on the Matches page too). Leads with the strongest
+  validation signal instead of an often-zero op stat.
+- **Post-review fixes** (after Isaac's review):
+  - Arch stage labels (`.mthd-arch-k`) changed moss → `--fg-3` (gray) for
+    readability.
+  - Dropped two misleading red KPI tones on Matches: "Biggest model–market gap"
+    no longer reddens (a gap isn't bad — semantic color is for good/bad deltas,
+    not categories), and "Model vs market" greens **only** when the model
+    *strictly* beats the market, neutral otherwise (was reddening on a marginal
+    at-market result, which overstated a non-problem). Removed the now-unused
+    `flagged` computation.
+  - Removed dead `capturedToday` (left over from the KPI swap) from `page.tsx`.
+- Design audited against the kaczor-design rules; all changes compliant.
 
 ### 2026-06-16 (ops)
 - **Enabled GitHub→Vercel auto-deploy** via `vercel git connect` (linked the
