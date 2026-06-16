@@ -77,12 +77,45 @@ Working tree clean; `main` is pushed; production is deployed.
 - **Never `git add -A`.** Stage explicit paths. Gitignored (never stage):
   `node_modules/`, `.next/`, `out/`, `.env*`, `.vercel`, `*.tsbuildinfo`,
   `next-env.d.ts`, `.DS_Store`.
-- **Deploy is a separate manual step** — pushing to `main` does NOT ship the
-  site. After pushing: `npm run build` (sanity) → `npx vercel --prod`.
-- Doc-only commits (this handoff, CLAUDE.md) don't need a `vercel --prod` —
-  they don't affect the deployed app.
+- **Auto-deploy is on** (since 2026-06-16) — pushing to `main` triggers a
+  production build + deploy on Vercel; PRs/other branches get previews. Run
+  `npm run build` locally first as a sanity check. `npx vercel --prod` still
+  works to force a deploy without pushing.
+- Doc-only commits (this handoff, CLAUDE.md) will trigger a (harmless) rebuild
+  but don't change the rendered app.
 
 ## Recent Changes
+### 2026-06-16 (employer-facing pass)
+The site is now shared with prospective employers (alongside casual friends/
+family use). A round of changes to surface authorship and engineering without
+cluttering the casual view:
+- **Site-wide colophon footer** (`src/components/shell/Footer.tsx`, rendered in
+  `layout.tsx` inside `.main` as the last `span-2` row). Name + one-line
+  description + stack line. **GitHub source link is bookmarked but commented
+  out** — the repo is private; uncomment the `<a>` in `Footer.tsx` once public.
+- **"How it's built" card on `/method`** — a 4-node Ingest→Model→Publish→Serve
+  data-flow diagram (`.mthd-arch*` styles) + stack chips (`.mthd-chip`, styled
+  to match `.badge`) + a closing note mapping the project to production
+  analytics work. Surfaces the pipeline/engineering story that was invisible.
+- **OG link-preview image** (`src/app/opengraph-image.tsx`, `next/og`). Static,
+  no external font fetch (keeps the build deterministic), brand palette, reuses
+  the rail `ik` mark. `metadataBase` added to `layout.tsx` so the URL resolves.
+- **Matches KPI swap** — "Captured today" replaced with **"Model vs market"**
+  (running model vs vig-free-market Brier + n, green when model ≤ market),
+  sourced from the performance blob (now polled on the Matches page too). Leads
+  with the strongest validation signal instead of an often-zero op stat.
+- Design audited against the kaczor-design rules; all compliant. **Open item:**
+  the 4 arch stage labels are in **moss** (echoing `.mthd-flow-num`), a mild
+  expansion of moss-as-focal — left as-is pending Isaac's review.
+
+### 2026-06-16 (ops)
+- **Enabled GitHub→Vercel auto-deploy** via `vercel git connect` (linked the
+  project to `Kaczor594/wc26-dashboard`, productionBranch `main`). Pushes to
+  `main` now build + deploy automatically; the manual `vercel --prod` step is
+  no longer required (still available to force a deploy). Updated `CLAUDE.md`
+  + this doc's Git Workflow / Known Issues to match. Not yet exercised by a
+  real push as of this edit.
+
 ### 2026-06-16 (this session — frontend)
 - **Reworded the `/players` "Expected vs actual" card title.** Old title
   ("Below the line means the coach disagrees with the model.") implied only
@@ -120,9 +153,9 @@ Working tree clean; `main` is pushed; production is deployed.
 > repo and its own handoff — not this one. This repo is frontend only.
 
 ## Known Issues
-- **No GitHub→Vercel auto-deploy.** The integration was never connected; the
-  entire Vercel deployment history is manual CLI deploys. `git push` updates
-  GitHub but triggers no build. **Always run `npx vercel --prod` after pushing.**
+- **GitHub→Vercel auto-deploy is connected** (2026-06-16). `git push` to `main`
+  now triggers a production build automatically. (Historically it was not
+  connected and every deploy was a manual `npx vercel --prod`.)
 - **Stale-blob trap (handled).** The Next Data Cache once served a 7h-stale blob;
   the proxy now forces `cache:"no-store"` upstream and sets freshness in the
   response header. Don't reintroduce caching on that upstream fetch.
@@ -135,5 +168,15 @@ Working tree clean; `main` is pushed; production is deployed.
   abstract). Isaac may want an "accuracy vs a coin flip" framing instead/as well.
 - [ ] Keep `src/lib/types.ts` in sync if the model's `publish_dashboard.py`
   schema changes (e.g. new blob fields).
-- [ ] `/performance` draw-overpricing readout becomes meaningful once ≥~15
-  matches are logged (tracked in the model repo).
+- [x] Draw-overpricing reviewed 2026-06-16 at n=16 (h2h): actual draws 8/16
+  (50%) vs market-implied 22.9% / model 25.1% (z≈+2.6/+2.3). The market did
+  **not** overprice draws — both under-priced them, but it's a small,
+  front-loaded sample driven by two tail draws (ESP 0-0 CPV @7%, QAT 1-1 SUI
+  @13%) in cagey openers. No action; consistent with the model repo's standing
+  "keep plain Poisson, no draw curve" decision. Revisit after the group stage
+  (~n=40+) when front-loading washes out.
+- [ ] Custom domain (P6, bookmarked): Isaac plans a personal site; a
+  `wc26.<personal-domain>` subdomain is the right path once that exists.
+- [ ] Review the moss-colored arch stage labels on `/method` (`.mthd-arch-k`) —
+  left moss to echo the pipeline diagram; drop to `--fg-3` if it reads as too
+  much focal color.
