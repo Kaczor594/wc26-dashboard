@@ -1,6 +1,6 @@
 # Claude Code Handoff — wc26-dashboard
 
-> Last updated: 2026-06-13
+> Last updated: 2026-06-16
 > Repo: https://github.com/Kaczor594/wc26-dashboard.git
 > Branch: main
 > Live: https://wc26-dashboard-nu.vercel.app
@@ -20,12 +20,12 @@ All five pages work and are deployed:
   divergence-vs-market calls, expandable per-row score-probability matrix.
 - `/performance` — Brier/log model-vs-market log.
 - `/tournament` — Monte Carlo stage probabilities + staleness banner.
-- `/players` — minutes-deficit analysis (ESPN-derived minutes).
-- `/method` — **new this session** — static, prose-first explainer of how the
-  model is calculated (audience: ~1–2 stats courses). Live and verified 200.
+- `/players` — minutes-deficit analysis (ESPN-derived minutes) + expected-vs-
+  actual scatter (card title reworded 2026-06-16 to name both directions).
+- `/method` — static, prose-first explainer of how the model is calculated
+  (audience: ~1–2 stats courses). Live and verified 200.
 
-Working tree clean; `main` is pushed; production is deployed (the `/method`
-deploy was manual — see Known Issues).
+Working tree clean; `main` is pushed; production is deployed.
 
 ## Environment Setup
 - `npm install`, then `npm run dev` → **port 3001** (port 3000 is taken by
@@ -83,7 +83,24 @@ deploy was manual — see Known Issues).
   they don't affect the deployed app.
 
 ## Recent Changes
-### 2026-06-13 (this session — frontend)
+### 2026-06-16 (this session — frontend)
+- **Reworded the `/players` "Expected vs actual" card title.** Old title
+  ("Below the line means the coach disagrees with the model.") implied only
+  under-use was divergence; distance from the line in *either* direction is the
+  disagreement. New title: *"Off the line, the coach plays a player more (above)
+  or less (below) than modeled."* (`src/app/players/page.tsx:125`). Commit
+  `b876d91`; pushed + deployed via `npx vercel --prod` (aliased to the canonical
+  domain).
+
+> Investigation note (no code change): traced why Spain's title odds appeared to
+> move "overnight" after the Cape Verde draw. The sim re-runs after **every**
+> result (not overnight) — confirmed in the model repo's matchday-agent log
+> (refresh at 18:06Z, ~2 min after the draw). The delayed visible move is the
+> known in-tournament **Elo drift**: half the team rating is eloratings.net's
+> published Elo, an external feed that updates on a lag, so the rating-driven
+> drop landed on a later refresh. All in the **worldcup-2026-model** repo.
+
+### 2026-06-13 (frontend)
 - **Added `/method`** — a "how the predictions are calculated" explainer. Four-
   stage pipeline diagram (Players → Team strength → Match model → Tournament),
   per-stage prose + one formula each, WC-specific calibration notes (half host
