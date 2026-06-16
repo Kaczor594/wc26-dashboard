@@ -313,7 +313,7 @@ tr.smx-row > td { padding: 0 10px 14px; }
 }
 .mthd-arch-k {
   font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.12em;
-  text-transform: uppercase; color: var(--moss-50);
+  text-transform: uppercase; color: var(--fg-3);
 }
 .mthd-arch-name { font-family: var(--font-sans); font-size: 13.5px; font-weight: 600; color: var(--fg-1); }
 .mthd-arch-desc { font-family: var(--font-prose); font-size: 13px; line-height: 1.4; color: var(--fg-2); }

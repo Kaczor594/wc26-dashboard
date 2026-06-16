@@ -177,6 +177,10 @@ cluttering the casual view:
   (~n=40+) when front-loading washes out.
 - [ ] Custom domain (P6, bookmarked): Isaac plans a personal site; a
   `wc26.<personal-domain>` subdomain is the right path once that exists.
-- [ ] Review the moss-colored arch stage labels on `/method` (`.mthd-arch-k`) —
-  left moss to echo the pipeline diagram; drop to `--fg-3` if it reads as too
-  much focal color.
+- [x] Arch stage labels on `/method` (`.mthd-arch-k`) changed moss → `--fg-3`
+  (gray) for readability, per Isaac's review.
+- [x] Removed two misleading red KPIs on Matches: "Biggest model–market gap"
+  no longer reddens (a gap isn't bad — semantic color is for good/bad deltas,
+  not categories), and "Model vs market" now greens **only** when the model
+  strictly beats the market, neutral otherwise (was reddening when marginally
+  behind, which overstated a non-problem on a near-tie).

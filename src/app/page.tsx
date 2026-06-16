@@ -100,7 +100,6 @@ export default function MatchesPage() {
       .filter((m) => m.market)
       .map((m) => m.market!.n_books)
       .at(-1);
-    const flagged = upcoming.filter((m) => m.divergence?.model_backs_underdog);
     const maxDiv = upcoming
       .filter((m) => m.divergence)
       .sort((a, b) => b.divergence!.tv - a.divergence!.tv)[0];
@@ -134,7 +133,7 @@ export default function MatchesPage() {
           final: d.basis === "final",
         };
       });
-    return { upcoming, next, capturedToday, lastBooks, flagged, maxDiv, excitement, divergences };
+    return { upcoming, next, capturedToday, lastBooks, maxDiv, excitement, divergences };
   }, [data]);
 
   if (!data || !view) {
@@ -161,13 +160,7 @@ export default function MatchesPage() {
         <Kpi
           label="Model vs market"
           value={mBrier != null ? num(mBrier, 3) : "—"}
-          tone={
-            mBrier != null && kBrier != null
-              ? mBrier <= kBrier
-                ? "pos"
-                : "neg"
-              : undefined
-          }
+          tone={mBrier != null && kBrier != null && mBrier < kBrier ? "pos" : undefined}
           delta={
             mBrier != null && kBrier != null
               ? `Brier · market ${num(kBrier, 3)} · n=${perfN}`
@@ -182,7 +175,6 @@ export default function MatchesPage() {
         <Kpi
           label="Biggest model–market gap"
           value={view.maxDiv ? pct(view.maxDiv.divergence!.tv, 1) : "—"}
-          tone={view.flagged.length > 0 ? "neg" : undefined}
           delta={
             view.maxDiv
               ? `${view.maxDiv.home} – ${view.maxDiv.away}`
