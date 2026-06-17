@@ -28,6 +28,22 @@ export interface Market {
   p_vigfree: Probs;
 }
 
+export interface LineupPlayer { player: string; pos: string; min?: number }
+
+export interface LineupSide {
+  team: string;
+  expected_xi: LineupPlayer[];
+  actual_xi: { player: string; pos: string }[] | null;
+  delta_implied_elo: number | null; // conditioned − expected player-implied Elo
+  delta_pp: number | null; // isolated win-prob swing (opponent held at expected XI)
+}
+
+export interface LineupDiff {
+  home: LineupSide | null;
+  away: LineupSide | null;
+  exact: boolean; // frozen at capture (true) vs estimated from current ratings
+}
+
 export interface Match {
   event_id: string;
   kickoff_utc: string;
@@ -42,6 +58,7 @@ export interface Match {
   market: Market | null;
   prelim: { p: Probs; lambda: { home: number; away: number } } | null;
   rating_prior: { home: number; away: number } | null;
+  lineup_diff: LineupDiff | null;
   excitement: { score: number; closeness: number; quality: number; basis: string } | null;
   divergence: {
     tv: number;

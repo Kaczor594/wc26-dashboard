@@ -15,6 +15,7 @@ import { Card, Empty } from "@/components/ui/Card";
 import { Kpi } from "@/components/ui/Kpi";
 import { ProbBar } from "@/components/ui/ProbBar";
 import { ScoreMatrix } from "@/components/ui/ScoreMatrix";
+import { LineupDiff } from "@/components/ui/LineupDiff";
 import { usePolledJson } from "@/lib/fetcher";
 import { useIsMobile } from "@/lib/useIsMobile";
 import { kickoffLocal, num, pct, untilKickoff } from "@/lib/format";
@@ -253,7 +254,10 @@ export default function MatchesClient({
                     )}
                   </div>
                   {open && clickable && (
-                    <ScoreMatrix match={m} rho={data.dc_rho!} />
+                    <div className="smx-detail">
+                      <ScoreMatrix match={m} rho={data.dc_rho!} />
+                      <LineupDiff match={m} />
+                    </div>
                   )}
                 </div>
               );
@@ -315,7 +319,10 @@ export default function MatchesClient({
                       {expanded === m.event_id && clickable && (
                         <tr className="smx-row">
                           <td colSpan={7}>
-                            <ScoreMatrix match={m} rho={data.dc_rho!} />
+                            <div className="smx-detail">
+                              <ScoreMatrix match={m} rho={data.dc_rho!} />
+                              <LineupDiff match={m} />
+                            </div>
                           </td>
                         </tr>
                       )}

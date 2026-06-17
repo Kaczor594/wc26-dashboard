@@ -204,6 +204,37 @@ tr.smx-row > td { padding: 0 10px 14px; }
 .smx-best { outline: 1.5px solid var(--moss-50); outline-offset: -1.5px; }
 .smx-source { margin-top: 8px; font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-3); }
 
+/* ==== LINEUP DIFF (right of the score matrix in the expanded row) ==== */
+.smx-detail { display: flex; gap: 36px; align-items: flex-start; flex-wrap: wrap; }
+.lud { padding: 10px 0 0; flex: 1 1 320px; min-width: 300px; max-width: 580px; }
+.lud-head { margin-bottom: 10px; }
+.lud-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 6px 28px; }
+.lud-side { min-width: 0; }
+.lud-team { display: flex; align-items: baseline; justify-content: space-between; gap: 8px; padding-bottom: 5px; margin-bottom: 6px; border-bottom: 1px solid var(--line-1); }
+.lud-name { font-family: var(--font-sans); font-size: 12.5px; font-weight: 600; letter-spacing: -0.01em; color: var(--fg-1); }
+.lud-delta { font-family: var(--font-mono); font-size: 10.5px; font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--fg-3); }
+.lud-delta .up { color: var(--moss-50); }
+.lud-delta .down { color: var(--terra-50); }
+.lud-delta .flat { color: var(--fg-3); }
+.lud-delta.approx { text-decoration: underline dotted var(--line-2); text-underline-offset: 2px; }
+.lud-list { list-style: none; margin: 0; padding: 0; }
+.lud-row { display: flex; align-items: baseline; gap: 8px; font-size: 11.5px; line-height: 1.55; color: var(--fg-2); }
+.lud-row .lud-player { font-family: var(--font-sans); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lud-row.new .lud-player { color: var(--terra-50); font-weight: 600; }
+.lud-row .pos { margin-left: auto; padding-left: 6px; font-family: var(--font-mono); font-size: 9px; letter-spacing: 0.04em; text-transform: uppercase; color: var(--fg-4); }
+.lud-benched { margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--line-1); }
+.lud-benched .eyebrow { display: block; font-size: 9px; margin-bottom: 4px; }
+.lud-benched-names { display: flex; flex-wrap: wrap; gap: 2px 12px; }
+.lud-bn { font-family: var(--font-sans); font-size: 10.5px; color: var(--fg-4); white-space: nowrap; }
+.lud-bn .num { font-variant-numeric: tabular-nums; }
+.lud-await { display: inline-block; margin-top: 8px; font-size: 9px; color: var(--fg-4); }
+.lud-source { margin-top: 12px; font-family: var(--font-mono); font-size: 10px; line-height: 1.5; color: var(--fg-3); max-width: 600px; }
+@media (max-width: 560px) {
+  .smx-detail { gap: 16px; }
+  .lud-cols { grid-template-columns: 1fr; gap: 14px; }
+  .lud { min-width: 0; }
+}
+
 /* ==== NOTICE / EMPTY ==== */
 .notice { border-radius: 6px; background: var(--terra-10); color: var(--terra-60); font-size: 13px; padding: 10px 14px; font-family: var(--font-mono); }
 .empty { padding: 36px 20px; text-align: center; color: var(--fg-3); }

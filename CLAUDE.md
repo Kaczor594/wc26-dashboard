@@ -56,11 +56,14 @@ its CLAUDE.md + CLAUDE_HANDOFF.md) — this repo is the frontend only.
 
 ## Key files
 - `src/app/page.tsx` — Matches (prelim/final predictions, excitement,
-  divergence calls, expandable score-probability matrix per row)
+  divergence calls, expandable score-probability matrix + lineup-diff per row)
 - `src/app/performance/page.tsx` — Brier/log model-vs-market log
 - `src/app/tournament/page.tsx` — sim probabilities + staleness banner
   (auto-refresh runs in the agent; banner persisting = refresh failed)
 - `src/app/players/page.tsx` — minutes-deficit analysis (ESPN-derived minutes)
 - `src/components/ui/` — Card/Kpi/ProbBar/ScoreMatrix primitives (kit ports)
+- `src/components/ui/LineupDiff.tsx` — expected XI vs confirmed XI + Δ implied-Elo
+  / isolated Δpp (reads `lineup_diff` from matches.json; frozen at capture by
+  `predict_match.R`, fallback in `publish_dashboard.py`)
 - `src/lib/scoreMatrix.ts` — Dixon-Coles score grid (mirrors the R model)
 - `src/lib/chartStyles.ts` — shared chart label/tooltip styles
