@@ -3,9 +3,15 @@
 import { useEffect, useRef, useState } from "react";
 
 /** Poll a /api/data/<file> JSON endpoint every `intervalMs`, pausing while
- *  the tab is hidden. Keeps the last good payload on transient failures. */
-export function usePolledJson<T>(file: string, intervalMs = 60_000) {
-  const [data, setData] = useState<T | null>(null);
+ *  the tab is hidden. Keeps the last good payload on transient failures.
+ *  `initialData` seeds the first render from server-rendered SSR so the
+ *  page paints real content before the first client fetch resolves. */
+export function usePolledJson<T>(
+  file: string,
+  initialData: T | null = null,
+  intervalMs = 60_000,
+) {
+  const [data, setData] = useState<T | null>(initialData);
   const [error, setError] = useState<string | null>(null);
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
 

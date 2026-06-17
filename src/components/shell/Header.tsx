@@ -14,9 +14,13 @@ const PAGE_NAME: Record<string, string> = {
   "/method": "Method",
 };
 
-export default function Header() {
+export default function Header({
+  initialMeta = null,
+}: {
+  initialMeta?: Meta | null;
+}) {
   const path = usePathname();
-  const { data: meta } = usePolledJson<Meta>("meta", 60_000);
+  const { data: meta } = usePolledJson<Meta>("meta", initialMeta);
   // re-render the age every 30s without refetching
   const [, tick] = useState(0);
   useEffect(() => {
