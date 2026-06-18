@@ -1,6 +1,6 @@
 # Claude Code Handoff — wc26-dashboard
 
-> Last updated: 2026-06-16
+> Last updated: 2026-06-18
 > Repo: https://github.com/Kaczor594/wc26-dashboard.git
 > Branch: main
 > Live: https://wc26-dashboard-nu.vercel.app
@@ -56,7 +56,10 @@ Working tree clean; `main` is pushed; production is deployed.
 - `src/components/ui/` — Card, Kpi, ProbBar, ScoreMatrix primitives.
 - `src/lib/` — `fetcher.ts` (60s polling hook), `types.ts` (mirrors the
   publisher's schema_version 1), `format.ts`, `scoreMatrix.ts` (Dixon-Coles grid,
-  mirrors the R model), `chartStyles.ts`, `useIsMobile.ts`.
+  mirrors the R model), `chartStyles.ts`, `useIsMobile.ts`, `serverFetch.ts`
+  (SSR seed), `dataSource.ts` (the single source of truth for the data origin:
+  `ALLOWED` allow-list + `dataUrl(file)` → `<DATA_BASE_URL>/wc26/<file>.json`,
+  shared by the API proxy and the SSR seed so the two can't drift).
 - Uploads are owned by the model's publisher (`worldcup-2026-model/scripts/
   publish_dashboard.py`, boto3 → Cloudflare R2 S3 API) — no upload helper lives
   in this repo since the 2026-06-18 R2 migration.
@@ -107,6 +110,12 @@ is a fixed **30-day** pause (not a billing reset), so waiting wasn't viable.
 - Verified: `--force` publish populated all 5 objects, r2.dev serves them (200,
   `application/json`), proxy endpoints 200, SSR carries real data. Redeployed
   `--prod`. The paused Vercel Blob store is now unused — nothing depends on it.
+- Post-migration cleanup (commits `c4df3b7`, `5e13184`): dropped `@vercel/blob`
+  + the dead Vercel `BLOB_READ_WRITE_TOKEN`; extracted the shared allow-list +
+  URL shape into `src/lib/dataSource.ts` (`ALLOWED` + `dataUrl`), now imported by
+  both `route.ts` and `serverFetch.ts`. Audit (`.claude/cleanup_report.md`)
+  otherwise clean — no orphaned references. Commits: `df621e9` (migration),
+  `c4df3b7` (rename + dep drop), `5e13184` (shared module).
 - Remaining follow-up: move the r2.dev public URL → a custom domain once the
   personal domain exists (better caching/longevity than the rate-limited r2.dev
   dev URL). Update `DATA_BASE_URL` in `.env.local` + Vercel when that happens.

@@ -70,3 +70,6 @@ its CLAUDE.md + CLAUDE_HANDOFF.md) — this repo is the frontend only.
   `predict_match.R`, fallback in `publish_dashboard.py`)
 - `src/lib/scoreMatrix.ts` — Dixon-Coles score grid (mirrors the R model)
 - `src/lib/chartStyles.ts` — shared chart label/tooltip styles
+- `src/lib/dataSource.ts` — single source of truth for the R2 data origin
+  (`ALLOWED` allow-list + `dataUrl(file)`); imported by `api/data/[file]/route.ts`
+  (proxy) and `src/lib/serverFetch.ts` (SSR seed) so the two can't drift
