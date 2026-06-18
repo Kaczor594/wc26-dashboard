@@ -4,23 +4,17 @@
 // and no-JS clients all see the dashboard. The client then takes over live
 // polling via usePolledJson, seeded with this same payload.
 //
-// Mirrors the upstream logic of /api/data/[file]/route.ts: same allow-list,
-// same R2 path, same `cache: "no-store"` (the Data Cache once pinned a
-// stale object for hours — keep freshness on the request, not the cache).
-const ALLOWED = new Set([
-  "meta",
-  "matches",
-  "performance",
-  "tournament",
-  "players",
-]);
+// Shares the allow-list + URL shape with the API proxy via dataSource.ts;
+// same `cache: "no-store"` (the Data Cache once pinned a stale object for
+// hours — keep freshness on the request, not the cache).
+import { ALLOWED, dataUrl } from "@/lib/dataSource";
 
 export async function fetchBlob<T>(file: string): Promise<T | null> {
   if (!ALLOWED.has(file)) return null;
-  const base = process.env.DATA_BASE_URL;
-  if (!base) return null;
+  const url = dataUrl(file);
+  if (!url) return null;
   try {
-    const r = await fetch(`${base}/wc26/${file}.json`, { cache: "no-store" });
+    const r = await fetch(url, { cache: "no-store" });
     if (!r.ok) return null;
     return (await r.json()) as T;
   } catch {

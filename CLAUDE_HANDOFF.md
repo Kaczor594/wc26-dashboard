@@ -57,7 +57,9 @@ Working tree clean; `main` is pushed; production is deployed.
 - `src/lib/` — `fetcher.ts` (60s polling hook), `types.ts` (mirrors the
   publisher's schema_version 1), `format.ts`, `scoreMatrix.ts` (Dixon-Coles grid,
   mirrors the R model), `chartStyles.ts`, `useIsMobile.ts`.
-- `scripts/blob_put.mjs` — upload helper the model's publisher shells out to.
+- Uploads are owned by the model's publisher (`worldcup-2026-model/scripts/
+  publish_dashboard.py`, boto3 → Cloudflare R2 S3 API) — no upload helper lives
+  in this repo since the 2026-06-18 R2 migration.
 
 ## Architecture
 - App Router. Data pages are `"use client"` and poll the blob proxy every 60s
