@@ -10,25 +10,31 @@ const POS_RANK: Record<string, number> = {
 };
 const posRank = (p: string) => POS_RANK[(p || "").toUpperCase()] ?? 2;
 
+/** Sign → color class for a rounded Elo delta: moss (up) for +, terracotta
+ *  (down) for −, gray (flat) at 0. Rounds first so the color matches the
+ *  integer that's displayed. */
+const eloDirClass = (v: number) => {
+  const r = Math.round(v);
+  return r === 0 ? "flat" : r < 0 ? "down" : "up";
+};
+
 /** Signed Δ chip — moss for an upgrade, terracotta for a downgrade, gray when
  *  flat. Dotted underline flags an estimate (capture predates the freeze). */
 function Delta({ elo, pp, exact }: { elo: number | null; pp: number | null; exact: boolean }) {
   if (elo == null) return null;
-  const dir = (v: number) => (Math.abs(v) < 1e-9 ? "flat" : v < 0 ? "down" : "up");
-  const eloDir = Math.abs(elo) < 1 ? "flat" : elo < 0 ? "down" : "up";
   return (
     <span
       className={`lud-delta ${exact ? "" : "approx"}`}
       title={exact ? undefined : "estimated from current ratings — captured before this view existed"}
     >
-      <span className={eloDir}>
+      <span className={eloDirClass(elo)}>
         {elo > 0 ? "+" : elo < 0 ? "−" : ""}
         {Math.abs(Math.round(elo))} Elo
       </span>
       {pp != null && (
         <>
           {" · "}
-          <span className={dir(pp)}>
+          <span className={Math.abs(pp) < 1e-9 ? "flat" : pp < 0 ? "down" : "up"}>
             {pp > 0 ? "+" : pp < 0 ? "−" : ""}
             {Math.abs(pp * 100).toFixed(1)}pp
           </span>
@@ -41,9 +47,8 @@ function Delta({ elo, pp, exact }: { elo: number | null; pp: number | null; exac
 /** Signed per-player Elo contribution — moss for +, terracotta for −. */
 function EloNum({ v }: { v: number }) {
   const r = Math.round(v);
-  const cls = r === 0 ? "flat" : r < 0 ? "down" : "up";
   return (
-    <span className={`lud-elo ${cls}`}>
+    <span className={`lud-elo ${eloDirClass(v)}`}>
       {r > 0 ? "+" : r < 0 ? "−" : ""}
       {Math.abs(r)}
     </span>
