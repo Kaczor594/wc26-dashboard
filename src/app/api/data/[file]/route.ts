@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Proxy to the Vercel Blob store. Keeps the blob hostname out of the
-// client and gives us a 60s shared cache.
+// Proxy to the Cloudflare R2 bucket (public r2.dev URL in BLOB_BASE_URL).
+// Keeps the storage hostname out of the client and gives us a 60s shared
+// cache. (Moved off Vercel Blob 2026-06-18 — its 2k-ops/mo free cap blocked
+// the store; R2's free tier is ~10M ops/mo.)
 const ALLOWED = new Set([
   "meta",
   "matches",
@@ -24,7 +26,7 @@ export async function GET(
   }
   try {
     // cache: "no-store" — Next's Data Cache pinned stale entries for hours
-    // (revalidation wedged during an invalid-payload episode). The blob CDN
+    // (revalidation wedged during an invalid-payload episode). The R2 CDN
     // (max-age=60) + this route's s-maxage=60 are the caching layers.
     const r = await fetch(`${base}/wc26/${file}.json`, { cache: "no-store" });
     if (!r.ok) {

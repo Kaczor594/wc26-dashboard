@@ -7,18 +7,23 @@ its CLAUDE.md + CLAUDE_HANDOFF.md) — this repo is the frontend only.
 
 ## Architecture
 - Next.js 16 App Router + React 19 + TS + Tailwind v4 + Recharts. No
-  backend: route handlers at `src/app/api/data/[file]` proxy 5 JSON blobs
-  from Vercel Blob (`BLOB_BASE_URL` env) with `cache: "no-store"` on the
-  upstream fetch — the Data Cache once pinned a stale blob for 7 hours, so
-  freshness lives in the response header (`max-age=30, s-maxage=60`)
-  instead. Pages poll every 60s via `src/lib/fetcher.ts`.
+  backend: route handlers at `src/app/api/data/[file]` proxy 5 JSON files
+  from a **Cloudflare R2** bucket (public r2.dev URL in `BLOB_BASE_URL` env)
+  with `cache: "no-store"` on the upstream fetch — the Data Cache once pinned
+  a stale object for 7 hours, so freshness lives in the response header
+  (`max-age=30, s-maxage=60`) instead. Pages poll every 60s via
+  `src/lib/fetcher.ts`. (Storage was Vercel Blob until 2026-06-18, when its
+  2,000-advanced-ops/month free cap blocked the store — see CLAUDE_HANDOFF.md.
+  The env var keeps its `BLOB_BASE_URL` name; rename to `DATA_BASE_URL` is a
+  bookmarked cleanup.)
 - Vercel Web Analytics enabled (`<Analytics />` in `layout.tsx`).
 - Data contract: `src/lib/types.ts` mirrors
   `worldcup-2026-model/scripts/publish_dashboard.py` (schema_version 1).
   Change them together.
-- `scripts/blob_put.mjs` — upload helper the publisher shells out to
-  (`@vercel/blob` SDK; the raw Blob REST API is presigned-only, don't
-  replace with plain HTTP PUT).
+- Uploads are owned by the publisher (`worldcup-2026-model/scripts/
+  publish_dashboard.py`, boto3 → R2 S3 API). The old `scripts/blob_put.mjs`
+  helper was removed in the R2 migration; `@vercel/blob` is now a dead dep
+  (left in package.json for now).
 
 ## Design system
 - Isaac's kaczor-design, **natural palette** (paper/stone/moss/terracotta,
@@ -44,7 +49,8 @@ its CLAUDE.md + CLAUDE_HANDOFF.md) — this repo is the frontend only.
   branches / PRs get preview deploys. Cloud builds use the Vercel project env
   vars, not `.env.local`. `npx vercel --prod` still works to force a deploy
   without pushing.
-- `.env.local`: `BLOB_BASE_URL=https://lpk0kojgqwo5via5.public.blob.vercel-storage.com`
+- `.env.local`: `BLOB_BASE_URL=https://pub-093e38680bba4ee492e38e6e66f31161.r2.dev`
+  (the bucket's public r2.dev URL; same value set in Vercel for Prod + Dev).
 
 ## Mobile
 - Phones get a card stack (`.only-mobile` / `.only-desktop` helpers in

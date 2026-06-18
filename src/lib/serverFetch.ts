@@ -5,8 +5,8 @@
 // polling via usePolledJson, seeded with this same payload.
 //
 // Mirrors the upstream logic of /api/data/[file]/route.ts: same allow-list,
-// same blob path, same `cache: "no-store"` (the Data Cache once pinned a
-// stale blob for hours — keep freshness on the request, not the cache).
+// same R2 path, same `cache: "no-store"` (the Data Cache once pinned a
+// stale object for hours — keep freshness on the request, not the cache).
 const ALLOWED = new Set([
   "meta",
   "matches",
