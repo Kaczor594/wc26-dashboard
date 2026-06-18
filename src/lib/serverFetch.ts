@@ -17,7 +17,7 @@ const ALLOWED = new Set([
 
 export async function fetchBlob<T>(file: string): Promise<T | null> {
   if (!ALLOWED.has(file)) return null;
-  const base = process.env.BLOB_BASE_URL;
+  const base = process.env.DATA_BASE_URL;
   if (!base) return null;
   try {
     const r = await fetch(`${base}/wc26/${file}.json`, { cache: "no-store" });

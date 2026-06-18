@@ -31,7 +31,7 @@ Working tree clean; `main` is pushed; production is deployed.
 - `npm install`, then `npm run dev` → **port 3001** (port 3000 is taken by
   dav-prep; Next auto-falls back to 3001).
 - `npm run build` before every deploy.
-- `.env.local` requires `BLOB_BASE_URL=https://pub-093e38680bba4ee492e38e6e66f31161.r2.dev`
+- `.env.local` requires `DATA_BASE_URL=https://pub-093e38680bba4ee492e38e6e66f31161.r2.dev`
   (the public r2.dev base of the Cloudflare R2 bucket the API proxy fetches
   from; was Vercel Blob until the 2026-06-18 migration — see Recent Changes).
 - Vercel CLI is linked (`.vercel/project.json`: project `wc26-dashboard`, team
@@ -96,16 +96,18 @@ is a fixed **30-day** pause (not a billing reset), so waiting wasn't viable.
 - **Migrated storage to Cloudflare R2** (free tier ~10M ops/mo). Bucket
   `wc26-data`, public access via its r2.dev URL. Publisher
   (`worldcup-2026-model/scripts/publish_dashboard.py`) now uploads via **boto3**
-  (R2 is S3-compatible); the node `blob_put.mjs` helper was deleted here and
-  `@vercel/blob` is now a dead dep (left in package.json).
+  (R2 is S3-compatible); the node `blob_put.mjs` helper and the `@vercel/blob`
+  dependency were both removed.
 - Dashboard read path is **unchanged** (`<base>/wc26/<file>.json`) — R2 was a
-  drop-in. Only `BLOB_BASE_URL` changed (local `.env.local` + Vercel Prod/Dev);
-  comments in `route.ts`/`serverFetch.ts` updated from "Vercel Blob" to R2.
+  drop-in. The env var was renamed `BLOB_BASE_URL` → **`DATA_BASE_URL`** (local
+  `.env.local` + Vercel Prod/Dev); comments in `route.ts`/`serverFetch.ts`
+  updated from "Vercel Blob" to R2.
 - Verified: `--force` publish populated all 5 objects, r2.dev serves them (200,
   `application/json`), proxy endpoints 200, SSR carries real data. Redeployed
   `--prod`. The paused Vercel Blob store is now unused — nothing depends on it.
-- Follow-ups: rename `BLOB_BASE_URL` → `DATA_BASE_URL`; drop `@vercel/blob`;
-  move r2.dev → custom domain when the personal domain exists.
+- Remaining follow-up: move the r2.dev public URL → a custom domain once the
+  personal domain exists (better caching/longevity than the rate-limited r2.dev
+  dev URL). Update `DATA_BASE_URL` in `.env.local` + Vercel when that happens.
 
 ### 2026-06-16 (employer-facing pass)
 The site is now shared with prospective employers (alongside casual friends/

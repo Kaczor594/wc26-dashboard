@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 
-// Proxy to the Cloudflare R2 bucket (public r2.dev URL in BLOB_BASE_URL).
+// Proxy to the Cloudflare R2 bucket (public r2.dev URL in DATA_BASE_URL).
 // Keeps the storage hostname out of the client and gives us a 60s shared
 // cache. (Moved off Vercel Blob 2026-06-18 — its 2k-ops/mo free cap blocked
 // the store; R2's free tier is ~10M ops/mo.)
@@ -20,9 +20,9 @@ export async function GET(
   if (!ALLOWED.has(file)) {
     return NextResponse.json({ error: "unknown file" }, { status: 404 });
   }
-  const base = process.env.BLOB_BASE_URL;
+  const base = process.env.DATA_BASE_URL;
   if (!base) {
-    return NextResponse.json({ error: "BLOB_BASE_URL not set" }, { status: 503 });
+    return NextResponse.json({ error: "DATA_BASE_URL not set" }, { status: 503 });
   }
   try {
     // cache: "no-store" — Next's Data Cache pinned stale entries for hours
