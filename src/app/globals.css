@@ -228,6 +228,16 @@ tr.smx-row > td { padding: 0 10px 14px; }
 .lud-bn { font-family: var(--font-sans); font-size: 10.5px; color: var(--fg-4); white-space: nowrap; }
 .lud-bn .num { font-variant-numeric: tabular-nums; }
 .lud-await { display: inline-block; margin-top: 8px; font-size: 9px; color: var(--fg-4); }
+/* per-player Elo attribution (off the expected XI / into the XI + residual) */
+.lud-attrib { margin-top: 8px; padding-top: 6px; border-top: 1px dashed var(--line-1); }
+.lud-grp { margin-bottom: 6px; }
+.lud-grp .eyebrow { display: block; font-size: 9px; margin-bottom: 2px; }
+.lud-elo { margin-left: 10px; min-width: 26px; text-align: right; font-family: var(--font-mono); font-size: 11px; font-variant-numeric: tabular-nums; }
+.lud-elo.up { color: var(--moss-50); }
+.lud-elo.down { color: var(--terra-50); }
+.lud-elo.flat { color: var(--fg-4); }
+.lud-resid { display: flex; align-items: baseline; gap: 8px; margin-top: 2px; padding-top: 4px; border-top: 1px solid var(--line-1); font-size: 10.5px; color: var(--fg-4); }
+.lud-resid .lud-player { font-style: italic; }
 .lud-source { margin-top: 12px; font-family: var(--font-mono); font-size: 10px; line-height: 1.5; color: var(--fg-3); max-width: 600px; }
 @media (max-width: 560px) {
   .smx-detail { gap: 16px; }

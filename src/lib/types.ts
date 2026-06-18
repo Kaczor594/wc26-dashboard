@@ -30,10 +30,13 @@ export interface Market {
 
 export interface LineupPlayer { player: string; pos: string; min?: number }
 
+export interface LineupAttrib { player: string; pos: string; d_elo: number }
+
 export interface LineupSide {
   team: string;
   expected_xi: LineupPlayer[];
   actual_xi: { player: string; pos: string }[] | null;
+  attrib: LineupAttrib[] | null; // per-player Elo contribution (quality×loading×Δmin)
   delta_implied_elo: number | null; // conditioned − expected player-implied Elo
   delta_pp: number | null; // isolated win-prob swing (opponent held at expected XI)
 }

@@ -38,6 +38,42 @@ function Delta({ elo, pp, exact }: { elo: number | null; pp: number | null; exac
   );
 }
 
+/** Signed per-player Elo contribution — moss for +, terracotta for −. */
+function EloNum({ v }: { v: number }) {
+  const r = Math.round(v);
+  const cls = r === 0 ? "flat" : r < 0 ? "down" : "up";
+  return (
+    <span className={`lud-elo ${cls}`}>
+      {r > 0 ? "+" : r < 0 ? "−" : ""}
+      {Math.abs(r)}
+    </span>
+  );
+}
+
+function EloGroup({
+  label,
+  rows,
+}: {
+  label: string;
+  rows: { player: string; pos: string; d_elo: number }[];
+}) {
+  if (rows.length === 0) return null;
+  return (
+    <div className="lud-grp">
+      <span className="eyebrow">{label}</span>
+      <ul className="lud-list">
+        {rows.map((p) => (
+          <li key={p.player} className="lud-row">
+            <span className="lud-player">{p.player}</span>
+            <span className="pos">{p.pos}</span>
+            <EloNum v={p.d_elo} />
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
 function Side({ side, exact }: { side: LineupSide; exact: boolean }) {
   const expected = new Set(side.expected_xi.map((p) => p.player));
   const hasActual = side.actual_xi != null && side.actual_xi.length > 0;
@@ -45,10 +81,24 @@ function Side({ side, exact }: { side: LineupSide; exact: boolean }) {
   const sorted = [...xi].sort((a, b) => posRank(a.pos) - posRank(b.pos));
   const confirmed = hasActual ? new Set(side.actual_xi!.map((p) => p.player)) : null;
   const benched = hasActual
-    ? side.expected_xi
-        .filter((p) => !confirmed!.has(p.player))
-        .sort((a, b) => (b.min ?? 0) - (a.min ?? 0))
+    ? side.expected_xi.filter((p) => !confirmed!.has(p.player))
     : [];
+
+  // Per-player Elo attribution (when the capture carries it): the team Δ split
+  // into who left the expected XI (negatives) and who came in (positives), with
+  // the within-XI minute leveling folded into a reconciling residual.
+  const hasAttrib = side.attrib != null && side.attrib.length > 0;
+  const attr = new Map((side.attrib ?? []).map((a) => [a.player, a.d_elo]));
+  const dElo = (name: string) => attr.get(name) ?? 0;
+  const off = benched
+    .map((p) => ({ player: p.player, pos: p.pos, d_elo: dElo(p.player) }))
+    .sort((a, b) => a.d_elo - b.d_elo);
+  const into = (hasActual ? side.actual_xi! : [])
+    .filter((p) => !expected.has(p.player))
+    .map((p) => ({ player: p.player, pos: p.pos, d_elo: dElo(p.player) }))
+    .sort((a, b) => b.d_elo - a.d_elo);
+  const shown = [...off, ...into].reduce((s, p) => s + p.d_elo, 0);
+  const residual = (side.delta_implied_elo ?? shown) - shown;
 
   return (
     <div className="lud-side">
@@ -64,17 +114,31 @@ function Side({ side, exact }: { side: LineupSide; exact: boolean }) {
           </li>
         ))}
       </ul>
-      {hasActual ? (
+      {hasActual && hasAttrib ? (
+        <div className="lud-attrib">
+          <EloGroup label="off the expected XI" rows={off} />
+          <EloGroup label="into the XI" rows={into} />
+          {Math.abs(residual) >= 1 && (
+            <div className="lud-resid">
+              <span className="lud-player">other minute shifts</span>
+              <EloNum v={residual} />
+            </div>
+          )}
+        </div>
+      ) : hasActual ? (
         benched.length > 0 && (
           <div className="lud-benched">
             <span className="eyebrow">model expected to start</span>
             <div className="lud-benched-names">
-              {benched.map((p) => (
-                <span key={p.player} className="lud-bn">
-                  {p.player}
-                  {p.min != null && <span className="num"> {Math.round(p.min)}′</span>}
-                </span>
-              ))}
+              {benched
+                .slice()
+                .sort((a, b) => (b.min ?? 0) - (a.min ?? 0))
+                .map((p) => (
+                  <span key={p.player} className="lud-bn">
+                    {p.player}
+                    {p.min != null && <span className="num"> {Math.round(p.min)}′</span>}
+                  </span>
+                ))}
             </div>
           </div>
         )
@@ -93,6 +157,8 @@ export function LineupDiff({ match }: { match: Match }) {
   if (!ld || (!ld.home && !ld.away)) return null;
   const anyActual =
     (ld.home?.actual_xi?.length ?? 0) > 0 || (ld.away?.actual_xi?.length ?? 0) > 0;
+  const anyAttrib =
+    (ld.home?.attrib?.length ?? 0) > 0 || (ld.away?.attrib?.length ?? 0) > 0;
   return (
     <div className="lud">
       <div className="lud-head">
@@ -106,6 +172,9 @@ export function LineupDiff({ match }: { match: Match }) {
         expected XI = top 11 by model minutes · terracotta = unexpected starter · Δ Elo =
         player-based rating move, opponent-independent · Δpp = win-probability swing from this
         XI alone, opponent held at its expected XI
+        {anyAttrib
+          ? " · per-player Elo = quality × position weight × Δ minutes (off + into + shifts = team Δ Elo)"
+          : ""}
         {anyActual && !ld.exact ? " · underlined = estimated from current ratings" : ""}
       </div>
     </div>
