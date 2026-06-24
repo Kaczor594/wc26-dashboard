@@ -33,15 +33,15 @@ const FLOW = [
   },
 ];
 
-// Out-of-sample W/D/L log-loss on the 147-match backtest. Scale truncated at
+// Out-of-sample W/D/L log-loss on the 262-match backtest. Scale truncated at
 // 0.96 so the (small, honest) gap between model and Elo is visible; the ≋ flag
 // + the note mark the truncation. Shorter bar = better.
 const SCALE_MIN = 0.96;
 const SCALE_MAX = 1.1;
 const w = (v: number) => `${((v - SCALE_MIN) / (SCALE_MAX - SCALE_MIN) * 100).toFixed(0)}%`;
 const BARS = [
-  { label: "This model", v: 1.003, focal: true },
-  { label: "Team Elo only", v: 1.01, focal: false },
+  { label: "This model", v: 0.987, focal: true },
+  { label: "Team Elo only", v: 0.993, focal: false },
   { label: "Coin flip", v: 1.099, focal: false },
 ];
 
@@ -91,7 +91,7 @@ const CAVEATS = [
   ],
   [
     "Small samples.",
-    "A 147-match backtest and a 48-team field leave real uncertainty. Treat single-game edges of a point or two as noise, not signal.",
+    "A 262-match backtest and a 48-team field leave real uncertainty. Treat single-game edges of a point or two as noise, not signal.",
   ],
   [
     "Some things aren't modelled.",
@@ -300,10 +300,9 @@ export default function MethodPage() {
         <div className="mthd-prose">
           <p>
             The regression above is fit on qualifiers — but a World Cup is not a
-            qualifier. A point-in-time backtest of the last three major
-            tournaments (2022 World Cup, Euro 2024, Copa América 2024 — 147
-            matches in all) surfaced two systematic gaps, and each is corrected
-            with a single dial:
+            qualifier. A point-in-time backtest of recent major tournaments
+            surfaced two systematic gaps, and each is corrected with a single
+            dial:
           </p>
           <p>
             <strong>Host advantage is smaller than an ordinary home game.</strong>{" "}
@@ -408,15 +407,15 @@ export default function MethodPage() {
       <Card
         className="span-2"
         eyebrow="Validation"
-        title="On 147 past matches, the player model beats both a coin flip and team-Elo alone."
+        title="On 262 past matches, the player model beats both a coin flip and team-Elo alone."
         prose
-        source="Out-of-sample W/D/L log-loss · WC 2022 + Euro 2024 + Copa América 2024 (147 matches) · point-in-time inputs"
+        source="Out-of-sample W/D/L log-loss · WC 2018 + Euro 2020 + WC 2022 + Euro 2024 + Copa América 2024 (262 matches) · point-in-time inputs"
       >
         <div className="mthd-prose mthd-prose--wide">
           <p>
             A model is only as honest as its out-of-sample test. We rebuilt the
             entire pipeline exactly as it would have stood <em>before</em> each
-            of the last three major tournaments — point-in-time squads, market
+            of five recent major tournaments — point-in-time squads, market
             values and Elo, with no knowledge of what happened next — and scored
             its match forecasts.
           </p>
