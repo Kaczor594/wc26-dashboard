@@ -56,9 +56,20 @@ export default function TournamentClient({
 
   const teams = useMemo(() => {
     if (!data) return [];
-    return [...data.teams].sort(
-      (a, b) => (b[sortKey] as number) - (a[sortKey] as number),
-    );
+    // Cascading tiebreak: the clicked column leads, then champion → final → SF
+    // → QF → R16 → R32 → rating, all descending. So the default (champion) view
+    // resolves deep-field ties by how far each team is expected to go.
+    const cascade: SortKey[] = [
+      "p_champion", "p_final", "p_SF", "p_QF", "p_R16", "p_R32", "rating",
+    ];
+    const order = [sortKey, ...cascade.filter((k) => k !== sortKey)];
+    return [...data.teams].sort((a, b) => {
+      for (const k of order) {
+        const d = (b[k] as number) - (a[k] as number);
+        if (d !== 0) return d;
+      }
+      return 0;
+    });
   }, [data, sortKey]);
 
   if (!data) {
