@@ -90,8 +90,12 @@ function Side({ side, exact }: { side: LineupSide; exact: boolean }) {
     : [];
 
   // Per-player Elo attribution (when the capture carries it): the team Δ split
-  // into who left the expected XI (negatives) and who came in (positives), with
-  // the within-XI minute leveling folded into a reconciling residual.
+  // into who left the expected XI (negatives) and who came in (positives). The
+  // "lineup-certainty + residual" line is everything else — dominated by the
+  // minutes reallocated from the uncertain-rotation tail onto the confirmed XI
+  // when the lineup locks (a certainty premium, largest for squads with a steep
+  // first-XI/bench quality drop-off), plus the first-order attribution's
+  // reconciling error so the parts sum to the team Δ implied-Elo.
   const hasAttrib = side.attrib != null && side.attrib.length > 0;
   const attr = new Map((side.attrib ?? []).map((a) => [a.player, a.d_elo]));
   const dElo = (name: string) => attr.get(name) ?? 0;
@@ -125,7 +129,7 @@ function Side({ side, exact }: { side: LineupSide; exact: boolean }) {
           <EloGroup label="into the XI" rows={into} />
           {Math.abs(residual) >= 1 && (
             <div className="lud-resid">
-              <span className="lud-player">other minute shifts</span>
+              <span className="lud-player">lineup-certainty + residual</span>
               <EloNum v={residual} />
             </div>
           )}
