@@ -147,7 +147,7 @@ export default function PlayersClient({
               domain={[0, 1.2]}
               tick={{ fontSize: 10.5 }}
               tickLine={false}
-              width={32}
+              width={44}
               name="actual"
             />
             <ReferenceLine
