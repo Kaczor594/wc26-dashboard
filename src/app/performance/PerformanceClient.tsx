@@ -33,10 +33,12 @@ export default function PerformanceClient({
     const scored = data.rows;
     const headToHead = scored.filter((r) => r.brier_market != null);
     const last = data.cumulative.at(-1);
-    const edgeBars = headToHead.map((r) => ({
-      name: `${r.home.slice(0, 3).toUpperCase()}–${r.away.slice(0, 3).toUpperCase()}`,
-      edge: +(r.brier_market! - r.brier_model).toFixed(3),
-    }));
+    const edgeBars = headToHead
+      .map((r) => ({
+        name: `${r.home.slice(0, 3).toUpperCase()}–${r.away.slice(0, 3).toUpperCase()}`,
+        edge: +(r.brier_market! - r.brier_model).toFixed(3),
+      }))
+      .reverse(); // most recent match at the top, matching the performance log
     const noMarket = scored.length - headToHead.length;
     return { scored, headToHead, last, edgeBars, noMarket };
   }, [data]);
@@ -174,6 +176,14 @@ export default function PerformanceClient({
                 tick={{ fontSize: 11 }}
               />
               <ReferenceLine x={0} stroke="var(--chart-axis)" />
+              <Tooltip
+                cursor={{ fill: "var(--chart-grid)" }}
+                contentStyle={chartTooltipStyle}
+                formatter={(v) => [
+                  typeof v === "number" ? signed(v, 3) : String(v),
+                  "edge",
+                ]}
+              />
               <Bar dataKey="edge" barSize={14} radius={[0, 2, 2, 0]} isAnimationActive={false}>
                 {view.edgeBars.map((d) => (
                   <Cell key={d.name} fill={d.edge >= 0 ? "var(--moss-40)" : "var(--negative)"} />
