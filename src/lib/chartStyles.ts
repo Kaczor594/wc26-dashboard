@@ -17,3 +17,16 @@ export const chartTooltipStyle: CSSProperties = {
   fontSize: 11,
   color: "var(--fg-on-inverse)",
 };
+
+/** Tooltip label (the match / fixture line). Explicit color + font is required:
+ *  Recharts renders the label as a <p>, so the global `p { color: var(--fg-2) }`
+ *  rule wins over the inherited inverse-surface color and washes the label out
+ *  (near-invisible in dark theme, low-contrast in light). Inline style beats the
+ *  selector. Mono 11px matches the value rows / running-accuracy tooltip. */
+export const chartTooltipLabelStyle: CSSProperties = {
+  fontFamily: "var(--font-mono)",
+  fontSize: 11,
+  fontWeight: 600,
+  color: "var(--fg-on-inverse)",
+  marginBottom: 2,
+};

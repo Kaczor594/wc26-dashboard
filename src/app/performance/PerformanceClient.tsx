@@ -18,7 +18,7 @@ import { Card, Empty } from "@/components/ui/Card";
 import { Kpi } from "@/components/ui/Kpi";
 import { usePolledJson } from "@/lib/fetcher";
 import { num, pct, signed } from "@/lib/format";
-import { chartTooltipStyle } from "@/lib/chartStyles";
+import { chartTooltipStyle, chartTooltipLabelStyle } from "@/lib/chartStyles";
 import type { PerformanceBlob } from "@/lib/types";
 
 export default function PerformanceClient({
@@ -122,6 +122,7 @@ export default function PerformanceClient({
               />
               <Tooltip
                 contentStyle={chartTooltipStyle}
+                labelStyle={chartTooltipLabelStyle}
                 labelFormatter={(i) =>
                   data.cumulative.find((p) => p.i === i)?.label ?? `match ${i}`
                 }
@@ -179,6 +180,7 @@ export default function PerformanceClient({
               <Tooltip
                 cursor={{ fill: "var(--chart-grid)" }}
                 contentStyle={chartTooltipStyle}
+                labelStyle={chartTooltipLabelStyle}
                 formatter={(v) => [
                   typeof v === "number" ? signed(v, 3) : String(v),
                   "edge",
