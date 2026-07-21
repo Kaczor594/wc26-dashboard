@@ -4,7 +4,7 @@ import { ImageResponse } from "next/og";
 // the build deterministic) — brand palette carries the look. next/og picks
 // this up automatically for both og:image and twitter:image.
 export const alt =
-  "World Cup 2026 — a live, player-based prediction model by Isaac Kaczor";
+  "World Cup 2026 — a player-based prediction model, reviewed after the final, by Isaac Kaczor";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
@@ -57,7 +57,7 @@ export default function OpengraphImage() {
               textTransform: "uppercase",
             }}
           >
-            World Cup 2026 · Live model
+            World Cup 2026 · Tournament review
           </div>
         </div>
 
@@ -83,8 +83,8 @@ export default function OpengraphImage() {
               lineHeight: 1.3,
             }}
           >
-            Live forecasts, market comparison and tournament simulation —
-            updated after every result.
+            Reviewed after the final: the champion it saw coming, the honest
+            model-vs-market scoreboard, and the luck table.
           </div>
         </div>
 

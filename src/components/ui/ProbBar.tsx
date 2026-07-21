@@ -1,19 +1,20 @@
 import type { Probs } from "@/lib/types";
 
-/** W/D/L micro-stack. Model variant uses moss/stone/terracotta; the
- *  `context` variant (market) is all-gray per the context-series rule. */
+/** W/D/L micro-stack. `model` uses moss/stone/terracotta; `ctx` (market)
+ *  is all-gray per the context-series rule; `xw` (post-match shot-based
+ *  xWDL) uses lighter steps of the model hues. */
 export function ProbBar({
   p,
-  context = false,
+  kind = "model",
   showNums = true,
 }: {
   p: Probs;
-  context?: boolean;
+  kind?: "model" | "ctx" | "xw";
   showNums?: boolean;
 }) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
-      <div className={`prob-bar ${context ? "ctx" : ""}`}>
+      <div className={`prob-bar ${kind === "model" ? "" : kind}`}>
         <i className="ph" style={{ width: `${p.home * 100}%` }} />
         <i className="pd" style={{ width: `${p.draw * 100}%` }} />
         <i className="pa" style={{ width: `${p.away * 100}%` }} />
