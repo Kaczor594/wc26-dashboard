@@ -12,3 +12,6 @@ next-env.d.ts
 CLAUDE.md
 CLAUDE_HANDOFF.md
 .claude/
+
+# Local planning artifacts (decision 2026-07-21: specs + research stay local)
+planning/

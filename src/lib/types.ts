@@ -139,3 +139,73 @@ export interface PlayerRow {
 }
 
 export interface PlayersBlob { generated_at: string; team_games: Record<string, number>; players: PlayerRow[] }
+
+/* ---- Offseason retrospective (static content in src/data/retro.ts) ----
+ * The tournament ended 2026-07-19; these types describe hand-curated,
+ * frozen content — numbers sourced from the offseason research docs, not
+ * from any live blob. */
+
+export interface RetroKpi {
+  label: string;
+  value: string;
+  sub?: string;
+}
+
+/** One model-vs-market call card: full H/D/A prob triples from all three views. */
+export interface RetroCall {
+  match: string; // "Germany 1–1 Paraguay"
+  stage: string;
+  outcome: Outcome; // 90-minute result the probs are scored against
+  outcomeLabel: string; // "draw — Paraguay advanced past 90'"
+  model: Probs;
+  market: Probs;
+  xwdl: Probs; // post-match shot-based (FotMob) win/draw/loss expectancy
+  note: string; // one-sentence read, xWDL-corroborated
+}
+
+export interface RetroSurprise {
+  team: string;
+  modelChampPct: number; // day-0 (V2.1, kickoff morning) P(champion), %
+  marketChampPct?: number; // same-day market P(champion), % — where notable
+  finish: string; // "Quarterfinals"
+  note: string;
+}
+
+export interface RetroLuckRow {
+  team: string;
+  pts: number; // group-stage points
+  xpts: number; // xWDL expected points
+  eliminated: boolean; // out in the group stage
+}
+
+export interface RetroBootRow {
+  player: string;
+  country: string;
+  goals: number;
+  minutes: number;
+  gMinusXg: number | null; // null where no Sofascore xG exists (e.g. <180 min)
+}
+
+export interface RetroPlayerCard {
+  player: string;
+  country: string;
+  stat: string; // headline stat line, pre-formatted
+  note: string;
+}
+
+/** Spain's run, one row per match — hero chart series. */
+export interface RetroPathRow {
+  stage: string;
+  opponent: string;
+  score: string; // display score; final is "1–0 aet"
+  modelWinPct: number | null; // null = no capture (market only)
+  marketWinPct: number;
+}
+
+/** By-stage / by-third log-loss comparison — model-vs-market chart series. */
+export interface RetroLLRow {
+  label: string;
+  n: number;
+  model: number;
+  market: number;
+}
