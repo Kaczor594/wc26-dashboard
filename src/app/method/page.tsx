@@ -45,6 +45,19 @@ const BARS = [
   { label: "Coin flip", v: 1.099, focal: false },
 ];
 
+// The real out-of-sample test: WC26 itself (100 odds-matched matches,
+// mean hard log-loss). Own truncated scale — these scores are better
+// (lower) than the historical backtest band above.
+const WC_MIN = 0.8;
+const WC_MAX = 1.15;
+const wcw = (v: number) => `${(((v - WC_MIN) / (WC_MAX - WC_MIN)) * 100).toFixed(0)}%`;
+const WC_BARS = [
+  { label: "This model", v: 0.889, focal: true },
+  { label: "Betting market", v: 0.854, focal: false },
+  { label: "Base rates", v: 1.069, focal: false },
+  { label: "Coin flip", v: 1.099, focal: false },
+];
+
 const GLOSSARY = [
   [
     "z-score",
@@ -76,7 +89,7 @@ const GLOSSARY = [
   ],
   [
     "vig",
-    "Short for vigorish (also “juice”): the bookmaker's built-in margin. Turn a book's odds into probabilities and they sum to more than 100% — that excess is the house's cut for taking the bet. To put the model and the market on equal footing we strip it out, rescaling back to a clean 100%; that's the “vig-free” market line shown on the Matches page.",
+    "Short for vigorish (also “juice”): the bookmaker's built-in margin. Turn a book's odds into probabilities and they sum to more than 100% — that excess is the house's cut for taking the bet. To put the model and the market on equal footing we strip it out, rescaling back to a clean 100%; that's the “vig-free” market line used throughout this site.",
   ],
 ];
 
@@ -349,16 +362,16 @@ export default function MethodPage() {
       <Card
         className="span-2"
         eyebrow="How it's built"
-        title="A live pipeline, not a static page — every result re-runs it end to end."
+        title="A hands-off pipeline that re-ran itself on every result, all tournament long."
         prose
-        source="Each stage runs automatically · the dashboard only ever reads the published output"
+        source="Each stage ran automatically through the final · the site now serves the frozen end-of-tournament output"
       >
         <div className="mthd-arch">
           <div className="mthd-arch-node">
             <span className="mthd-arch-k">Ingest</span>
             <span className="mthd-arch-name">ESPN lineups + results</span>
             <span className="mthd-arch-desc">
-              A matchday agent polls confirmed elevens and final scores.
+              A matchday agent polled confirmed elevens and final scores.
             </span>
           </div>
           <span className="mthd-arch-arrow">→</span>
@@ -367,7 +380,7 @@ export default function MethodPage() {
             <span className="mthd-arch-name">Python + R</span>
             <span className="mthd-arch-desc">
               Players re-rated, teams rebuilt, the match and tournament models
-              re-run.
+              re-run after every tick.
             </span>
           </div>
           <span className="mthd-arch-arrow">→</span>
@@ -375,7 +388,7 @@ export default function MethodPage() {
             <span className="mthd-arch-k">Publish</span>
             <span className="mthd-arch-name">JSON snapshots</span>
             <span className="mthd-arch-desc">
-              Five versioned blobs written to storage on every tick.
+              Versioned JSON snapshots written to storage on every run.
             </span>
           </div>
           <span className="mthd-arch-arrow">→</span>
@@ -383,7 +396,8 @@ export default function MethodPage() {
             <span className="mthd-arch-k">Serve</span>
             <span className="mthd-arch-name">This dashboard</span>
             <span className="mthd-arch-desc">
-              A Next.js front end polls the snapshots and renders them live.
+              A Next.js front end rendered them live; it now serves the frozen
+              final record.
             </span>
           </div>
         </div>
@@ -441,6 +455,42 @@ export default function MethodPage() {
           ≈1.10; perfect foresight scores 0). The model edges raw team-Elo and
           clears a coin flip comfortably — but the margin over Elo is modest, and
           we report it that way on purpose.
+        </p>
+
+        <div className="mthd-prose mthd-prose--wide" style={{ marginTop: 20 }}>
+          <p>
+            <strong>Then the 2026 World Cup happened — the one test nothing
+            could leak into.</strong> Over the 100 matches with captured
+            betting odds, both the model and the market beat the naive
+            baselines by a distance; the market finished ahead of the model by
+            a real but narrow margin (p ≈ 0.06). Put on the coin-flip scale:
+            the market recovered about 22% of the distance from a random
+            forecast toward perfect foresight, the model about 19% — two
+            informed forecasters in the same league, well clear of chance.
+          </p>
+        </div>
+        <div className="mthd-bars" style={{ marginTop: 12 }}>
+          {WC_BARS.map((b) => (
+            <div className="mthd-bar-row" key={b.label}>
+              <span className="mthd-bar-label">{b.label}</span>
+              <span className="mthd-bar-track">
+                <span
+                  className={`mthd-bar-fill ${b.focal ? "focal" : ""}`}
+                  style={{ width: wcw(b.v) }}
+                />
+              </span>
+              <span className="mthd-bar-val num">{b.v.toFixed(3)}</span>
+            </div>
+          ))}
+        </div>
+        <p className="mthd-note">
+          <span className="mthd-trunc">≋</span> Scale starts at 0.80 · WC26
+          final scores, mean hard log-loss, n = 100 · &quot;base rates&quot; =
+          the season&apos;s own home/draw/away frequencies applied to every
+          match. The split matters: the market&apos;s whole edge came from the
+          68 group games (0.834 vs 0.887) — in the 32 knockout matches the
+          model was flat-out even with it (0.894 vs 0.896). The full breakdown
+          is in the tournament review.
         </p>
       </Card>
 

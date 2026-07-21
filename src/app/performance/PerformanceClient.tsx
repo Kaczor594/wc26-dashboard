@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
+import Link from "next/link";
 import {
   Bar,
   BarChart,
@@ -14,25 +15,17 @@ import {
   XAxis,
   YAxis,
 } from "recharts";
-import { Card, Empty } from "@/components/ui/Card";
+import { Card } from "@/components/ui/Card";
 import { Kpi } from "@/components/ui/Kpi";
-import { usePolledJson } from "@/lib/fetcher";
 import { num, pct, signed } from "@/lib/format";
 import { chartTooltipStyle, chartTooltipLabelStyle } from "@/lib/chartStyles";
 import type { PerformanceBlob } from "@/lib/types";
 
-export default function PerformanceClient({
-  initialPerf,
-}: {
-  initialPerf: PerformanceBlob | null;
-}) {
-  const { data } = usePolledJson<PerformanceBlob>("performance", initialPerf);
-
+export default function PerformanceClient({ perf }: { perf: PerformanceBlob }) {
   const view = useMemo(() => {
-    if (!data) return null;
-    const scored = data.rows;
+    const scored = perf.rows;
     const headToHead = scored.filter((r) => r.brier_market != null);
-    const last = data.cumulative.at(-1);
+    const last = perf.cumulative.at(-1);
     const edgeBars = headToHead
       .map((r) => ({
         name: `${r.home.slice(0, 3).toUpperCase()}–${r.away.slice(0, 3).toUpperCase()}`,
@@ -40,27 +33,9 @@ export default function PerformanceClient({
       }))
       .reverse(); // most recent match at the top, matching the performance log
     const noMarket = scored.length - headToHead.length;
-    return { scored, headToHead, last, edgeBars, noMarket };
-  }, [data]);
-
-  if (!data || !view) {
-    return (
-      <Card className="span-2" eyebrow="Performance">
-        <Empty title="Connecting to the model feed" />
-      </Card>
-    );
-  }
-
-  if (view.scored.length === 0) {
-    return (
-      <Card className="span-2" eyebrow="Performance" title="No matches scored yet." prose>
-        <Empty
-          title="The log starts with the first final whistle"
-          sub="every captured match lands here once it finishes — model vs vig-free market, Brier and log scores"
-        />
-      </Card>
-    );
-  }
+    const wins = headToHead.filter((r) => r.brier_model < r.brier_market!).length;
+    return { scored, headToHead, last, edgeBars, noMarket, wins };
+  }, [perf]);
 
   const modelBrier = view.last?.mean_brier_model;
   const marketBrier = view.last?.mean_brier_market;
@@ -68,6 +43,29 @@ export default function PerformanceClient({
 
   return (
     <>
+      {/* Final verdict ------------------------------------------------- */}
+      <Card
+        className="span-2"
+        eyebrow="Final verdict · tournament complete"
+        title="The market finished ahead — narrowly — and the model was even in the knockouts"
+        prose
+        source="Mean hard log-loss over the 100 odds-matched matches · market 0.854 vs model 0.889 (p ≈ 0.06) · knockouts 0.896 vs 0.894"
+      >
+        <div className="mthd-lede">
+          <p>
+            This log is frozen: the tournament ended 2026-07-19. Over the full
+            100-match sample the vig-free market out-scored the model on mean
+            log-loss, 0.854 to 0.889 — a real but narrow gap that sits at the
+            edge of statistical significance. In the 32 knockout games the two
+            were dead even. Match by match the market took most of the duels
+            ({view.headToHead.length - view.wins} to {view.wins}, the profile
+            of an underdog-backer: frequent small losses, occasional bigger
+            wins). The full story — where the gap came from, and what the shot
+            record says — is in the <Link href="/">tournament review</Link>.
+          </p>
+        </div>
+      </Card>
+
       <div className="kpi-row span-2">
         <Kpi label="Matches scored" value={String(view.scored.length)} />
         <Kpi
@@ -91,69 +89,59 @@ export default function PerformanceClient({
       <Card
         className="span-2"
         eyebrow="Running accuracy"
-        title={
-          edge != null
-            ? edge >= 0
-              ? "The model is ahead of the market so far."
-              : "The market is ahead — for now."
-            : "Waiting for a head-to-head sample."
-        }
+        title="How the race unfolded, match by match."
         prose
         source={`3-outcome Brier, running mean · model: lineup-conditioned capture · market: vig-free median of EU books · n = ${view.headToHead.length}${view.noMarket > 0 ? ` · ${view.noMarket} matches lack odds and are excluded` : ""}`}
       >
-        {data.cumulative.length === 0 ? (
-          <Empty title="Needs at least one match with both model and odds" />
-        ) : (
-          <ResponsiveContainer width="100%" height={280}>
-            <LineChart data={data.cumulative} margin={{ top: 8, right: 70, left: 0, bottom: 4 }}>
-              <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
-              <XAxis
-                dataKey="i"
-                tickLine={false}
-                axisLine={{ stroke: "var(--chart-axis)" }}
-                tick={{ fontSize: 11 }}
-              />
-              <YAxis
-                domain={[0, "auto"]}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 11 }}
-                width={36}
-              />
-              <Tooltip
-                contentStyle={chartTooltipStyle}
-                labelStyle={chartTooltipLabelStyle}
-                labelFormatter={(i) =>
-                  data.cumulative.find((p) => p.i === i)?.label ?? `match ${i}`
-                }
-                formatter={(v, name) => [
-                  typeof v === "number" ? v.toFixed(3) : String(v),
-                  name === "mean_brier_model" ? "model" : "market",
-                ]}
-              />
-              <Line
-                dataKey="mean_brier_model"
-                stroke="var(--moss-50)"
-                strokeWidth={2}
-                dot={false}
-                isAnimationActive={false}
-                label={(props) =>
-                  labelLast(props, data.cumulative.length, "model", "var(--moss-50)")
-                }
-              />
-              <Line
-                dataKey="mean_brier_market"
-                stroke="var(--chart-context)"
-                strokeWidth={1.5}
-                dot={false}
-                isAnimationActive={false}
-                label={(props) =>
-                  labelLast(props, data.cumulative.length, "market", "var(--fg-3)")
-                }
-              />
-            </LineChart>
-          </ResponsiveContainer>
-        )}
+        <ResponsiveContainer width="100%" height={280}>
+          <LineChart data={perf.cumulative} margin={{ top: 8, right: 70, left: 0, bottom: 4 }}>
+            <CartesianGrid stroke="var(--chart-grid)" vertical={false} />
+            <XAxis
+              dataKey="i"
+              tickLine={false}
+              axisLine={{ stroke: "var(--chart-axis)" }}
+              tick={{ fontSize: 11 }}
+            />
+            <YAxis
+              domain={[0, "auto"]}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 11 }}
+              width={36}
+            />
+            <Tooltip
+              contentStyle={chartTooltipStyle}
+              labelStyle={chartTooltipLabelStyle}
+              labelFormatter={(i) =>
+                perf.cumulative.find((p) => p.i === i)?.label ?? `match ${i}`
+              }
+              formatter={(v, name) => [
+                typeof v === "number" ? v.toFixed(3) : String(v),
+                name === "mean_brier_model" ? "model" : "market",
+              ]}
+            />
+            <Line
+              dataKey="mean_brier_model"
+              stroke="var(--moss-50)"
+              strokeWidth={2}
+              dot={false}
+              isAnimationActive={false}
+              label={(props) =>
+                labelLast(props, perf.cumulative.length, "model", "var(--moss-50)")
+              }
+            />
+            <Line
+              dataKey="mean_brier_market"
+              stroke="var(--chart-context)"
+              strokeWidth={1.5}
+              dot={false}
+              isAnimationActive={false}
+              label={(props) =>
+                labelLast(props, perf.cumulative.length, "market", "var(--fg-3)")
+              }
+            />
+          </LineChart>
+        </ResponsiveContainer>
       </Card>
 
       <Card
@@ -162,38 +150,34 @@ export default function PerformanceClient({
         prose
         source="bar = Brier(market) − Brier(model) · positive (moss) = model closer to the result"
       >
-        {view.edgeBars.length === 0 ? (
-          <Empty title="No head-to-head matches yet" />
-        ) : (
-          <ResponsiveContainer width="100%" height={Math.max(180, view.edgeBars.length * 26)}>
-            <BarChart data={view.edgeBars} layout="vertical" margin={{ left: 8, right: 36 }}>
-              <XAxis type="number" tick={{ fontSize: 10.5 }} tickLine={false} axisLine={false} />
-              <YAxis
-                type="category"
-                dataKey="name"
-                width={86}
-                tickLine={false}
-                axisLine={false}
-                tick={{ fontSize: 11 }}
-              />
-              <ReferenceLine x={0} stroke="var(--chart-axis)" />
-              <Tooltip
-                cursor={{ fill: "var(--chart-grid)" }}
-                contentStyle={chartTooltipStyle}
-                labelStyle={chartTooltipLabelStyle}
-                formatter={(v) => [
-                  typeof v === "number" ? signed(v, 3) : String(v),
-                  "edge",
-                ]}
-              />
-              <Bar dataKey="edge" barSize={14} radius={[0, 2, 2, 0]} isAnimationActive={false}>
-                {view.edgeBars.map((d) => (
-                  <Cell key={d.name} fill={d.edge >= 0 ? "var(--moss-40)" : "var(--negative)"} />
-                ))}
-              </Bar>
-            </BarChart>
-          </ResponsiveContainer>
-        )}
+        <ResponsiveContainer width="100%" height={Math.max(180, view.edgeBars.length * 26)}>
+          <BarChart data={view.edgeBars} layout="vertical" margin={{ left: 8, right: 36 }}>
+            <XAxis type="number" tick={{ fontSize: 10.5 }} tickLine={false} axisLine={false} />
+            <YAxis
+              type="category"
+              dataKey="name"
+              width={86}
+              tickLine={false}
+              axisLine={false}
+              tick={{ fontSize: 11 }}
+            />
+            <ReferenceLine x={0} stroke="var(--chart-axis)" />
+            <Tooltip
+              cursor={{ fill: "var(--chart-grid)" }}
+              contentStyle={chartTooltipStyle}
+              labelStyle={chartTooltipLabelStyle}
+              formatter={(v) => [
+                typeof v === "number" ? signed(v, 3) : String(v),
+                "edge",
+              ]}
+            />
+            <Bar dataKey="edge" barSize={14} radius={[0, 2, 2, 0]} isAnimationActive={false}>
+              {view.edgeBars.map((d) => (
+                <Cell key={d.name} fill={d.edge >= 0 ? "var(--moss-40)" : "var(--negative)"} />
+              ))}
+            </Bar>
+          </BarChart>
+        </ResponsiveContainer>
       </Card>
 
       <Card

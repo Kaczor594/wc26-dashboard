@@ -71,10 +71,12 @@ export const SPAIN_PATH: RetroPathRow[] = [
 // Sources: narrative §6 (104 matches, 301 corrected goals, upset count),
 // market-xwdl §1 (64/100 by hard log-loss), narrative §5 (9 of 32 past 90').
 
+// Head-to-head record corrected 2026-07-21: the market won 64 of the 100
+// per-match log-loss duels (the research draft had this sign-inverted).
 export const KPIS: RetroKpi[] = [
   { label: "Matches", value: "104", sub: "Jun 11 – Jul 19" },
   { label: "Goals", value: "301", sub: "2.89 per match" },
-  { label: "Model beat market", value: "64/100", sub: "matches, by log-loss" },
+  { label: "Head-to-head", value: "36–64", sub: "model vs market, by log-loss" },
   { label: "Outright underdog wins", value: "15", sub: "of 81 model-covered results" },
   { label: "Knockouts past 90'", value: "9/32", sub: "incl. the final" },
 ];
@@ -91,7 +93,10 @@ export const VERDICT = {
   marketSoftLL: 0.923,
   uniformLL: 1.099, // coin-flip baseline
   baseRateLL: 1.069, // season-frequency baseline
-  matchesWon: 64, // of 100, model beat market by hard log-loss
+  // Per-match duels: market 64, model 36 (hard log-loss); the model's
+  // wins ran slightly bigger (mean 0.151 vs 0.140 nats).
+  modelWon: 36,
+  marketWon: 64,
   summary:
     "The market won the tournament overall — but the model was dead even in the 32 knockout games, its whole deficit came from the opening third (thin priors on debutant squads), and the gap halves when both are scored against the shot record instead of the scoreboard.",
 } as const;

@@ -13,8 +13,6 @@ export default function Footer() {
       </div>
       <div className="site-foot-r">
         <span className="site-foot-stack">Python · R · SQLite · Next.js · TypeScript</span>
-        {/* Source link — bookmarked. The repo is private for now; uncomment
-            when it's made public:
         <a
           className="site-foot-link"
           href="https://github.com/Kaczor594/wc26-dashboard"
@@ -23,7 +21,6 @@ export default function Footer() {
         >
           Source ↗
         </a>
-        */}
       </div>
     </footer>
   );
