@@ -138,7 +138,7 @@ export default function RetroPage() {
         eyebrow="Tournament review · Jun 11 – Jul 19, 2026"
         title="The model's number-one pick won the World Cup — and no champion in the data deserved it more"
         prose
-        source="Model: kickoff-morning V2.1 title probabilities · shots: FotMob xG · The final's winning goal came in extra time and is unattributed in every dataset used here."
+        source="Model: kickoff-morning title probabilities · shots: FotMob xG · The final's winning goal came in extra time and is unattributed in every dataset used here."
       >
         <div className="mthd-lede">
           <p>
@@ -146,7 +146,8 @@ export default function RetroPage() {
             top pick at {HERO.spain.modelChampPct}% — above the market&apos;s{" "}
             {HERO.spain.marketChampPct}% — and had Argentina, the eventual
             runner-up, at {HERO.argentina.modelChampPct}% against a market
-            price of just {HERO.argentina.marketChampPct}%. {HERO.eloBlendNote}
+            price of just {HERO.argentina.marketChampPct}% — its top two picks
+            of the whole field were exactly the two teams that reached the final.
           </p>
           <p style={{ marginTop: 12 }}>
             The shot record says the pick aged even better than the scoreline:
@@ -329,7 +330,7 @@ export default function RetroPage() {
       <Card
         eyebrow="Overachievers"
         title="Norway's run was the shock the whole bracket felt"
-        source="Day-0 title odds: kickoff-morning V2.1 model (market shown where the gap is the story)"
+        source="Day-0 title odds: kickoff-morning model (market shown where the gap is the story)"
       >
         {OVERACHIEVERS.map((s) => (
           <SurpriseRow key={s.team} s={s} />
@@ -339,7 +340,7 @@ export default function RetroPage() {
       <Card
         eyebrow="Underachievers"
         title="The old powers fell in the first knockout rounds"
-        source={`Day-0 title odds: kickoff-morning V2.1 model · ${GROUPS_CALLED.called} of ${GROUPS_CALLED.total} groups still went to the model's pre-tournament favourite`}
+        source={`Day-0 title odds: kickoff-morning model · ${GROUPS_CALLED.called} of ${GROUPS_CALLED.total} groups still went to the model's pre-tournament favourite`}
       >
         {FLOPS.map((s) => (
           <SurpriseRow key={s.team} s={s} />
@@ -353,7 +354,7 @@ export default function RetroPage() {
       <Card
         eyebrow="Golden boot"
         title="Mbappé won the boot; Messi, at 38, was the engine"
-        source="Goals: tournament record · xG, xA: Sofascore box scores · G−xG for Oyarzabal not shown (bench-role sample)"
+        source="Goals: tournament record · xG, xA: Sofascore box scores"
       >
         <div className="table-scroll">
           <table className="mtable">

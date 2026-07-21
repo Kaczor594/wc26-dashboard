@@ -64,7 +64,7 @@ export interface RetroCall {
 
 export interface RetroSurprise {
   team: string;
-  modelChampPct: number; // day-0 (V2.1, kickoff morning) P(champion), %
+  modelChampPct: number; // day-0 (kickoff morning) P(champion), %
   marketChampPct?: number; // same-day market P(champion), % — where notable
   finish: string; // "Quarterfinals"
   note: string;

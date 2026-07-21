@@ -37,13 +37,9 @@ const p = (home: number, draw: number, away: number): Probs => ({ home, draw, aw
 export const HERO = {
   headline: "Spain 1–0 Argentina, aet",
   date: "2026-07-19",
-  // Kickoff-morning (V2.1, post-Elo-blend) title probabilities vs same-day market.
+  // Kickoff-morning title probabilities vs same-day market.
   spain: { modelChampPct: 16.0, marketChampPct: 14.9, modelRank: 1 },
   argentina: { modelChampPct: 11.9, marketChampPct: 8.2 },
-  // The V2.1 Elo blend shipped hours before kickoff moved Spain 9.4→16.0%
-  // and Argentina 7.0→11.9% — it called both finalists.
-  eloBlendNote:
-    "Both boosts came from the Elo blend shipped the morning of kickoff: Spain jumped from 9.4% to 16.0% and Argentina from 7.0% to 11.9% — the model's final pre-tournament change promoted exactly the two teams that met in the final.",
   // xWDL case that Spain deserved it (market-xwdl §4).
   xwdl: {
     xgd: +13.86, // best in the field
@@ -208,7 +204,7 @@ export const WORST_CALLS: RetroCall[] = [
 ];
 
 /* ---- Surprises vs day-0 title odds ------------------------------------ */
-// Source: narrative §2 & §4. Percentages are kickoff-morning V2.1 model
+// Source: narrative §2 & §4. Percentages are kickoff-morning model
 // P(champion); market shown where the divergence is the story.
 
 export const OVERACHIEVERS: RetroSurprise[] = [
@@ -234,13 +230,13 @@ export const OVERACHIEVERS: RetroSurprise[] = [
     team: "Switzerland",
     modelChampPct: 2.3,
     finish: "Quarterfinals",
-    note: "Two shootout wins deep into the bracket before Argentina ended the run — in extra time, naturally.",
+    note: "A shootout win over Colombia carried it to the quarterfinals before Argentina ended the run — in extra time, naturally.",
   },
   {
     team: "Cape Verde",
     modelChampPct: 0.01, // 1e-4 in market_comparison_2026-06-11.csv — model's #37 squad of 48
     finish: "Round of 32",
-    note: "The model's #37-rated squad drew Spain 0–0, reached the knockouts, and held Argentina 1–1 through extra time before losing on penalties.",
+    note: "The model's #37-rated squad drew Spain 0–0, reached the knockouts, and took eventual runner-up Argentina to extra time before losing 3–2.",
   },
 ];
 
@@ -268,7 +264,7 @@ export const FLOPS: RetroSurprise[] = [
     team: "Portugal",
     modelChampPct: 7.3,
     finish: "Round of 16",
-    note: "The pre-Elo-blend #1 pick lost its group to Colombia, then met Spain a round too early.",
+    note: "One of the model's top pre-tournament picks lost its group to Colombia, then met Spain a round too early.",
   },
   {
     team: "Turkey",
@@ -325,7 +321,7 @@ export const GOLDEN_BOOT: RetroBootRow[] = [
   { player: "Erling Haaland", country: "Norway", goals: 7, minutes: 465, gMinusXg: 4.68 },
   { player: "Harry Kane", country: "England", goals: 6, minutes: 654, gMinusXg: 3.51 },
   { player: "Ousmane Dembélé", country: "France", goals: 6, minutes: 597, gMinusXg: 4.48 },
-  { player: "Mikel Oyarzabal", country: "Spain", goals: 5, minutes: 606, gMinusXg: null },
+  { player: "Mikel Oyarzabal", country: "Spain", goals: 5, minutes: 606, gMinusXg: 0.79 },
 ];
 
 export const MESSI_NOTE =
@@ -342,7 +338,7 @@ export const BREAKOUTS: RetroPlayerCard[] = [
     player: "Diney",
     country: "Cape Verde",
     stat: "10th → 100th percentile",
-    note: "The single largest rating-vs-output gap at the tournament — the anchor of the back line that held Argentina for 120 minutes.",
+    note: "The single largest rating-vs-output gap at the tournament — the anchor of the back line that took Argentina to extra time in the Round of 32.",
   },
 ];
 
