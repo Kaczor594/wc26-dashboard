@@ -244,19 +244,7 @@ export default function RetroPage() {
           </div>
         </div>
         <p className="mthd-note">
-          Both forecasters beat the naive baselines by a distance (coin flip{" "}
-          {VERDICT.uniformLL}, season base rates {VERDICT.baseRateLL}). Match
-          by match the market took {VERDICT.marketWon} of the 100 duels to the
-          model&apos;s {VERDICT.modelWon} — the profile of an
-          underdog-backer: frequent small losses, occasional bigger wins.
-          Scored against the post-match shot record instead of the scoreboard,
-          the gap halves ({VERDICT.modelSoftLL} vs {VERDICT.marketSoftLL}). Structurally the two disagree in one
-          repeatable way: the market prices favourites{" "}
-          {FAVORITE_BIAS.market > 0 ? "+" : ""}
-          {FAVORITE_BIAS.market.toFixed(3)} win-probability points above what
-          the shot record says they deserve, the model{" "}
-          {FAVORITE_BIAS.model.toFixed(3)} below — the model is the
-          buy-the-underdog side of the market.
+          {`Both forecasters beat the naive baselines by a distance (coin flip ${VERDICT.uniformLL}, season base rates ${VERDICT.baseRateLL}). Match by match the market took ${VERDICT.marketWon} of the 100 duels to the model's ${VERDICT.modelWon} — the profile of an underdog-backer: frequent small losses, occasional bigger wins. Scored against the post-match shot record instead of the scoreboard, the gap halves (${VERDICT.modelSoftLL} vs ${VERDICT.marketSoftLL}). Structurally the two disagree in one repeatable way: the market prices favourites +${FAVORITE_BIAS.market.toFixed(3)} win-probability points above what the shot record says they deserve, the model ${FAVORITE_BIAS.model.toFixed(3)} below — the model is the buy-the-underdog side of the market.`}
         </p>
       </Card>
 
