@@ -457,7 +457,7 @@ tr.smx-row > td { padding: 0 10px 14px; }
 .retro-llbar .who { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--fg-3); }
 .retro-llbar .val { font-family: var(--font-mono); font-size: 11px; font-variant-numeric: tabular-nums; color: var(--fg-1); text-align: right; }
 
-/* ---- model/market/shots probability triples (call cards) ---- */
+/* ---- model/market/xWDL probability triples (call cards) ---- */
 .retro-call { padding: 13px 0 14px; border-top: 1px solid var(--line-1); }
 .retro-call:first-of-type { border-top: 0; padding-top: 2px; }
 .retro-call-head { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; flex-wrap: wrap; }
@@ -467,7 +467,7 @@ tr.smx-row > td { padding: 0 10px 14px; }
 .retro-call-bar { display: grid; grid-template-columns: 46px 1fr; align-items: center; gap: 10px; }
 .retro-call-bar .who { font-family: var(--font-mono); font-size: 9.5px; letter-spacing: 0.07em; text-transform: uppercase; color: var(--fg-3); }
 .retro-call-note { font-family: var(--font-prose); font-size: 14px; line-height: 1.45; color: var(--fg-2); }
-/* xWDL (shots) variant of the W/D/L micro-stack — lighter steps of the
+/* xWDL variant of the W/D/L micro-stack — lighter steps of the
    same hues so it reads as "the deserved version of" the model bar. */
 .prob-bar.xw .ph { background: var(--moss-20); }
 .prob-bar.xw .pd { background: var(--paper-30); }
@@ -526,4 +526,65 @@ tr.smx-row > td { padding: 0 10px 14px; }
   flex: 1 1 210px; min-width: 180px;
   background: var(--bg-sunken); border-radius: 6px; padding: 11px 13px;
   font-family: var(--font-prose); font-size: 14px; line-height: 1.45; color: var(--fg-1);
+}
+
+/* ==== inline glossary link (term → /glossary or Wikipedia) ============ */
+.glossary-link { color: var(--brand); text-decoration: underline; text-underline-offset: 2px; text-decoration-thickness: 1px; text-decoration-color: var(--brand-ring); white-space: nowrap; }
+.glossary-link:hover { text-decoration-color: var(--brand); }
+
+/* ==== reconstructed-value marker (hero Spain-path Uruguay bar) ======== */
+/* the value is a leak-safe re-run, not a live capture — mark it both ways */
+.recon-mark { font-family: var(--font-mono); font-size: 9px; color: var(--fg-4); vertical-align: super; cursor: help; margin-left: 1px; }
+.retro-bar-fill.focal.recon {
+  background:
+    repeating-linear-gradient(135deg, var(--positive) 0 5px, color-mix(in srgb, var(--positive) 62%, var(--bg-sunken)) 5px 10px);
+}
+
+/* ==== /glossary page ================================================== */
+.gloss-body { font-family: var(--font-prose); font-size: 15px; line-height: 1.55; color: var(--fg-2); margin-bottom: 14px; }
+.gloss-cap { font-family: var(--font-mono); font-size: 10.5px; line-height: 1.5; color: var(--fg-3); margin-top: 10px; }
+
+/* xG chance bars */
+.gloss-xg { display: flex; flex-direction: column; gap: 6px; }
+.gloss-xg-row { display: grid; grid-template-columns: 148px 1fr 40px; align-items: center; gap: 10px; }
+.gloss-xg-lbl { font-family: var(--font-sans); font-size: 12.5px; color: var(--fg-2); }
+.gloss-xg-track { position: relative; height: 14px; background: var(--bg-sunken); border-radius: 2px; }
+.gloss-xg-fill { position: absolute; left: 0; top: 0; bottom: 0; background: var(--positive); border-radius: 2px; }
+.gloss-xg-val { font-family: var(--font-mono); font-size: 11px; font-variant-numeric: tabular-nums; color: var(--fg-1); text-align: right; }
+
+/* xWDL worked example */
+.gloss-xwdl { display: flex; flex-direction: column; gap: 8px; align-items: stretch; max-width: 460px; }
+.gloss-xwdl-inputs { display: flex; align-items: baseline; gap: 12px; font-family: var(--font-sans); font-size: 13px; color: var(--fg-2); }
+.gloss-xwdl-inputs b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; color: var(--fg-1); }
+.gloss-xwdl-vs { font-family: var(--font-mono); font-size: 10px; letter-spacing: 0.08em; text-transform: uppercase; color: var(--fg-4); }
+.gloss-xwdl-arrow { font-size: 15px; color: var(--fg-4); line-height: 1; }
+.gloss-xwdl-key { display: flex; flex-wrap: wrap; gap: 4px 16px; font-family: var(--font-mono); font-size: 10.5px; color: var(--fg-3); }
+.gloss-xwdl-key span { display: inline-flex; align-items: center; gap: 6px; }
+.gloss-xwdl-key .k { width: 10px; height: 10px; border-radius: 2px; display: inline-block; }
+.gloss-xwdl-key .k.ph { background: var(--moss-20); }
+.gloss-xwdl-key .k.pd { background: var(--paper-30); }
+.gloss-xwdl-key .k.pa { background: var(--terra-20); }
+
+/* player-quality percentile ruler */
+.gloss-qual { margin-top: 6px; padding-top: 30px; }
+.gloss-qual-track { position: relative; height: 10px; background: var(--bg-sunken); border-radius: 5px; }
+.gloss-qual-mid { position: absolute; top: -5px; bottom: -5px; width: 1px; background: var(--line-2); }
+.gloss-qual-mark { position: absolute; top: 50%; }
+.gloss-qual-mark .dot { position: absolute; top: 50%; left: 0; width: 11px; height: 11px; border-radius: 50%; background: var(--stone-40); transform: translate(-50%, -50%); box-shadow: 0 0 0 2px var(--bg-1, var(--paper-05)); }
+.gloss-qual-mark.focal .dot { background: var(--positive); width: 13px; height: 13px; }
+.gloss-qual-mark .lbl { position: absolute; bottom: 12px; left: 0; transform: translateX(-50%); white-space: nowrap; font-family: var(--font-mono); font-size: 10px; color: var(--fg-3); }
+.gloss-qual-mark.focal .lbl { transform: translateX(-80%); color: var(--fg-1); }
+.gloss-qual-axis { display: flex; justify-content: space-between; margin-top: 9px; font-family: var(--font-mono); font-size: 10px; color: var(--fg-4); }
+
+/* statistical-terms definition list */
+.gloss-defs { display: grid; grid-template-columns: 1fr 1fr; gap: 0 32px; }
+.gloss-def { padding: 12px 0; border-top: 1px solid var(--line-1); display: flex; flex-direction: column; gap: 3px; }
+.gloss-def:first-child, .gloss-def:nth-child(2) { border-top: 0; padding-top: 2px; }
+.gloss-def-term { font-family: var(--font-sans); font-size: 13.5px; font-weight: 600; color: var(--fg-1); }
+.gloss-def-term--mono { font-family: var(--font-mono); font-size: 12.5px; }
+.gloss-def-body { font-family: var(--font-prose); font-size: 14.5px; line-height: 1.5; color: var(--fg-2); }
+@media (max-width: 640px) {
+  .gloss-defs { grid-template-columns: 1fr; }
+  .gloss-def:nth-child(2) { border-top: 1px solid var(--line-1); padding-top: 12px; }
+  .gloss-xg-row { grid-template-columns: 120px 1fr 36px; }
 }

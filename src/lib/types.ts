@@ -58,7 +58,7 @@ export interface RetroCall {
   outcomeLabel: string; // "draw — Paraguay advanced past 90'"
   model: Probs;
   market: Probs;
-  xwdl: Probs; // post-match shot-based (FotMob) win/draw/loss expectancy
+  xwdl: Probs; // post-match xWDL — xG-based (FotMob) win/draw/loss expectancy
   note: string; // one-sentence read, xWDL-corroborated
 }
 

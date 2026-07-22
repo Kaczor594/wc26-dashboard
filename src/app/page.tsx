@@ -86,7 +86,7 @@ function CallRow({ c }: { c: RetroCall }) {
           <ProbBar p={c.market} kind="ctx" />
         </div>
         <div className="retro-call-bar">
-          <span className="who">Shots</span>
+          <span className="who">xWDL</span>
           <ProbBar p={c.xwdl} kind="xw" />
         </div>
       </div>
@@ -138,7 +138,7 @@ export default function RetroPage() {
         eyebrow="Tournament review · Jun 11 – Jul 19, 2026"
         title="The model's number-one pick won the World Cup — and no champion in the data deserved it more"
         prose
-        source="Model: kickoff-morning title probabilities · shots: FotMob xG · The final's winning goal came in extra time and is unattributed in every dataset used here."
+        source="Model: kickoff-morning title probabilities · xWDL: FotMob xG · The final's winning goal came in extra time and is unattributed in every dataset used here."
       >
         <div className="mthd-lede">
           <p>
@@ -150,7 +150,8 @@ export default function RetroPage() {
             of the whole field were exactly the two teams that reached the final.
           </p>
           <p style={{ marginTop: 12 }}>
-            The shot record says the pick aged even better than the scoreline:
+            <a href="/glossary" target="_blank" rel="noopener noreferrer" className="glossary-link">xWDL</a>{" "}
+            says the pick aged even better than the scoreline:
             Spain finished with the field&apos;s best expected-goal difference,
             was the xWDL favourite in all eight of its games, and conceded once
             all month — while actually <em>under</em>-finishing its own
@@ -250,15 +251,15 @@ export default function RetroPage() {
           </div>
         </div>
         <p className="mthd-note">
-          {`Both forecasters beat the naive baselines by a distance (coin flip ${VERDICT.uniformLL}, season base rates ${VERDICT.baseRateLL}). Match by match the market took ${VERDICT.marketWon} of the 100 duels to the model's ${VERDICT.modelWon} — the profile of an underdog-backer: frequent small losses, occasional bigger wins. Scored against the post-match shot record instead of the scoreboard, the gap halves (${VERDICT.modelSoftLL} vs ${VERDICT.marketSoftLL}). Structurally the two disagree in one repeatable way: the market prices favourites +${FAVORITE_BIAS.market.toFixed(3)} win-probability points above what the shot record says they deserve, the model ${FAVORITE_BIAS.model.toFixed(3)} below — the model is the buy-the-underdog side of the market.`}
+          {`Both forecasters beat the naive baselines by a distance (coin flip ${VERDICT.uniformLL}, season base rates ${VERDICT.baseRateLL}). Match by match the market took ${VERDICT.marketWon} of the 100 duels to the model's ${VERDICT.modelWon} — the profile of an underdog-backer: frequent small losses, occasional bigger wins. Scored on post-match xWDL instead of the scoreboard, the gap halves (${VERDICT.modelSoftLL} vs ${VERDICT.marketSoftLL}). Structurally the two disagree in one repeatable way: the market prices favourites +${FAVORITE_BIAS.market.toFixed(3)} win-probability points above what xWDL says they deserve, the model ${FAVORITE_BIAS.model.toFixed(3)} below — the model is the buy-the-underdog side of the market.`}
         </p>
       </Card>
 
       {/* Best / worst calls --------------------------------------------- */}
       <Card
         eyebrow="Best calls"
-        title="Where the model beat the market — and the shots agree"
-        source="Pre-kickoff probabilities, home·draw·away · Shots = post-match xWDL · all five calls corroborated by the shot record"
+        title="Where the model beat the market — and xWDL agrees"
+        source="Pre-kickoff probabilities, home·draw·away · xWDL = post-match xG win/draw/loss expectancy · all five calls corroborated by it"
       >
         {BEST_CALLS.map((c) => (
           <CallRow key={c.match} c={c} />
@@ -268,7 +269,7 @@ export default function RetroPage() {
       <Card
         eyebrow="Worst calls"
         title="Its one weak spot: underrating certain favourites"
-        source="Pre-kickoff probabilities, home·draw·away · Shots = post-match xWDL · all three misses corroborated by the shot record"
+        source="Pre-kickoff probabilities, home·draw·away · xWDL = post-match xG win/draw/loss expectancy · all three misses corroborated by it"
       >
         {WORST_CALLS.map((c) => (
           <CallRow key={c.match} c={c} />
@@ -286,7 +287,7 @@ export default function RetroPage() {
         eyebrow="Luck, measured"
         title="Mexico ran hottest, and the two unluckiest teams both went home early"
         prose
-        source="Group-stage points vs xWDL expected points (post-match shot record, FotMob) · 3 games per team · teams with |Pts − xPts| ≥ 0.7 shown"
+        source="Group-stage points vs xWDL expected points (post-match xG-based, FotMob) · 3 games per team · teams with |Pts − xPts| ≥ 0.7 shown"
       >
         <div className="mthd-lede">
           <p>{LUCK_NOTES.headline}</p>
@@ -322,7 +323,7 @@ export default function RetroPage() {
           })}
         </div>
         <div className="retro-legend">
-          <span><span className="sw pos" />Points above the shot-based expectation</span>
+          <span><span className="sw pos" />Points above the xWDL expectation</span>
           <span><span className="sw neg" />Points below it</span>
           <span>OUT = eliminated in the group stage</span>
         </div>

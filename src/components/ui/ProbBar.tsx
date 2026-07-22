@@ -1,7 +1,7 @@
 import type { Probs } from "@/lib/types";
 
 /** W/D/L micro-stack. `model` uses moss/stone/terracotta; `ctx` (market)
- *  is all-gray per the context-series rule; `xw` (post-match shot-based
+ *  is all-gray per the context-series rule; `xw` (post-match xWDL / xG-based
  *  xWDL) uses lighter steps of the model hues. */
 export function ProbBar({
   p,

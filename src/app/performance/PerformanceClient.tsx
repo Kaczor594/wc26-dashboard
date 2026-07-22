@@ -60,8 +60,9 @@ export default function PerformanceClient({ perf }: { perf: PerformanceBlob }) {
             were dead even. Match by match the market took most of the duels
             ({view.headToHead.length - view.wins} to {view.wins}, the profile
             of an underdog-backer: frequent small losses, occasional bigger
-            wins). The full story — where the gap came from, and what the shot
-            record says — is in the <Link href="/">tournament review</Link>.
+            wins). The full story — where the gap came from, and what{" "}
+            <a href="/glossary" target="_blank" rel="noopener noreferrer" className="glossary-link">xWDL</a>{" "}
+            says — is in the <Link href="/">tournament review</Link>.
           </p>
         </div>
       </Card>

@@ -1,6 +1,8 @@
 import { Fragment } from "react";
 import type { Metadata } from "next";
+import Link from "next/link";
 import { Card } from "@/components/ui/Card";
+import { STAT_TERMS } from "@/data/glossary";
 
 export const metadata: Metadata = {
   title: "Method — how the WC26 model works",
@@ -56,41 +58,6 @@ const WC_BARS = [
   { label: "Betting market", v: 0.854, focal: false },
   { label: "Base rates", v: 1.069, focal: false },
   { label: "Coin flip", v: 1.099, focal: false },
-];
-
-const GLOSSARY = [
-  [
-    "z-score",
-    "How many standard deviations a value sits above or below the average. A striker at +2 is well above a typical striker; −1 is below. It puts goalkeepers and forwards on one comparable scale.",
-  ],
-  [
-    "Elo",
-    "A points rating, born in chess and now standard for national teams: you gain points beating strong opponents and lose them slipping up against weak ones. The gap between two ratings maps directly to a win probability.",
-  ],
-  [
-    "Poisson distribution",
-    "The textbook model for counting independent, fairly rare events in a fixed window — here, goals in a match. Give it an expected count and it returns the probability of 0, 1, 2, 3 … goals.",
-  ],
-  [
-    "λ (lambda)",
-    "The single input to a Poisson distribution: a team's expected number of goals in the match. A bigger favourite gets a higher λ.",
-  ],
-  [
-    "Dixon–Coles",
-    "A standard correction to the basic two-Poisson football model. It nudges the probabilities of the lowest scores (0-0, 1-0, 1-1), which independent Poisson gets slightly wrong because level teams play more cautiously.",
-  ],
-  [
-    "Monte Carlo simulation",
-    "Estimating an outcome by repeated random trial: play the tournament thousands of times, each match decided by a draw from its score distribution, then count how often each team advances.",
-  ],
-  [
-    "log-loss",
-    "A scoring rule for probability forecasts. It rewards putting confidence on what actually happened and punishes confident-but-wrong calls. Lower is better; a coin-flip forecaster scores about 1.10 across three outcomes.",
-  ],
-  [
-    "vig",
-    "Short for vigorish (also “juice”): the bookmaker's built-in margin. Turn a book's odds into probabilities and they sum to more than 100% — that excess is the house's cut for taking the bet. To put the model and the market on equal footing we strip it out, rescaling back to a clean 100%; that's the “vig-free” market line used throughout this site.",
-  ],
 ];
 
 const CAVEATS = [
@@ -507,15 +474,29 @@ export default function MethodPage() {
       </Card>
 
       {/* Glossary ------------------------------------------------------ */}
-      <Card eyebrow="Key terms" title="A quick statistical glossary." prose>
+      <Card
+        eyebrow="Key terms"
+        title="A quick statistical glossary."
+        prose
+        source="Full illustrated glossary — incl. xG, xWDL and player quality — at /glossary"
+      >
         <div className="mthd-defs">
-          {GLOSSARY.map(([t, d]) => (
-            <div className="mthd-def" key={t}>
-              <span className="mthd-def-term mthd-def-term--mono">{t}</span>
-              <span className="mthd-def-body">{d}</span>
+          {STAT_TERMS.map((t) => (
+            <div className="mthd-def" key={t.term}>
+              <span
+                className={`mthd-def-term${t.mono ? " mthd-def-term--mono" : ""}`}
+              >
+                {t.term}
+              </span>
+              <span className="mthd-def-body">{t.def}</span>
             </div>
           ))}
         </div>
+        <p className="mthd-note">
+          The three model-specific terms — expected goals, xWDL and player
+          quality — get a worked visual on the{" "}
+          <Link href="/glossary">glossary page</Link>.
+        </p>
       </Card>
 
       {/* Footer note --------------------------------------------------- */}

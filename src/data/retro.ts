@@ -84,7 +84,7 @@ export const KPIS: RetroKpi[] = [
 
 /* ---- Model vs market: the honest verdict ------------------------------ */
 // Source: market-xwdl §1. Hard = scored on results; soft = scored on the
-// post-match shot record (xWDL). Lower log-loss is better.
+// post-match xWDL (xG-based win/draw/loss expectancy). Lower log-loss is better.
 
 export const VERDICT = {
   modelHardLL: 0.889,
@@ -99,7 +99,7 @@ export const VERDICT = {
   modelWon: 36,
   marketWon: 64,
   summary:
-    "The market won the tournament overall — but the model was dead even in the 32 knockout games, its whole deficit came from the opening third (thin priors on debutant squads), and the gap halves when both are scored against the shot record instead of the scoreboard.",
+    "The market won the tournament overall — but the model was dead even in the 32 knockout games, its whole deficit came from the opening third (thin priors on debutant squads), and the gap halves when both are scored on xWDL instead of the scoreboard.",
 } as const;
 
 export const STAGE_LL: RetroLLRow[] = [
@@ -115,11 +115,11 @@ export const THIRDS_LL: RetroLLRow[] = [
 
 // Structural signature (market-xwdl §3, full-tournament regeneration
 // 2026-07-21): the market prices favorites +0.028 win-prob points above
-// the shot-based deserved rate; the model prices them −0.021 below.
+// the xWDL-deserved rate; the model prices them −0.021 below.
 export const FAVORITE_BIAS = { market: +0.028, model: -0.021 } as const;
 
 /* ---- Best & worst calls (all xWDL-corroborated) ----------------------- */
-// Source: market-xwdl §2 — only "genuine" rows (shot record agrees), no
+// Source: market-xwdl §2 — only "genuine" rows (xWDL agrees), no
 // hard-result flukes on either list.
 
 export const BEST_CALLS: RetroCall[] = [
@@ -131,7 +131,7 @@ export const BEST_CALLS: RetroCall[] = [
     model: p(0.869, 0.103, 0.028),
     market: p(0.906, 0.066, 0.028),
     xwdl: p(0.765, 0.198, 0.037),
-    note: "The model gave the world-cup debutants a draw price half again the market's — and the shot record says even that was too low.",
+    note: "The model gave the world-cup debutants a draw price half again the market's — and xWDL says even that was too low.",
   },
   {
     match: "Germany 1–1 Paraguay",
@@ -151,7 +151,7 @@ export const BEST_CALLS: RetroCall[] = [
     model: p(0.239, 0.285, 0.477),
     market: p(0.376, 0.29, 0.334),
     xwdl: p(0.093, 0.186, 0.721),
-    note: "The model made Belgium a clear favorite while the market leaned USA; the shot record says Belgium should have been priced higher still.",
+    note: "The model made Belgium a clear favorite while the market leaned USA; xWDL says Belgium should have been priced higher still.",
   },
   {
     match: "France 4–6 England",
@@ -171,7 +171,7 @@ export const BEST_CALLS: RetroCall[] = [
     model: p(0.657, 0.229, 0.115),
     market: p(0.749, 0.171, 0.08),
     xwdl: p(0.269, 0.379, 0.352),
-    note: "Both underrated DR Congo — but the model much less so, and the shot record says DR Congo were the better side on the day.",
+    note: "Both underrated DR Congo — but the model much less so, and xWDL says DR Congo were the better side on the day.",
   },
 ];
 
@@ -184,7 +184,7 @@ export const WORST_CALLS: RetroCall[] = [
     model: p(0.398, 0.309, 0.293),
     market: p(0.575, 0.246, 0.179),
     xwdl: p(0.834, 0.133, 0.033),
-    note: "The model's biggest genuine miss: it had this near even while the market made DR Congo a clear favorite — and the shot record says they should have been favored even more heavily.",
+    note: "The model's biggest genuine miss: it had this near even while the market made DR Congo a clear favorite — and xWDL says they should have been favored even more heavily.",
   },
   {
     match: "Ghana 1–0 Panama",
@@ -194,7 +194,7 @@ export const WORST_CALLS: RetroCall[] = [
     model: p(0.267, 0.306, 0.428),
     market: p(0.406, 0.302, 0.292),
     xwdl: p(0.496, 0.329, 0.175),
-    note: "The model actually leaned Panama; market and shot record both had Ghana as the stronger side.",
+    note: "The model actually leaned Panama; market and xWDL both had Ghana as the stronger side.",
   },
   {
     match: "United States 4–1 Paraguay",
@@ -310,7 +310,7 @@ export const LUCK_NOTES = {
   headline:
     "Mexico's perfect group came on 6.24 expected points — the luckiest run in the field. Turkey and Uruguay, the two unluckiest teams, were both eliminated.",
   reversals:
-    "Only 4 matches all tournament saw a side with a >65% shot-based win expectancy fail to win — all group-stage finishing failures, with Ecuador's 0–0 against Curaçao on 3.05 xG the most extreme.",
+    "Only 4 matches all tournament saw a side with a >65% xWDL win expectancy fail to win — all group-stage finishing failures, with Ecuador's 0–0 against Curaçao on 3.05 xG the most extreme.",
   knockoutReversal:
     "The biggest knockout deserved-result reversal: Brazil out-created Norway to a 0.602 xWDL win probability in the Round of 16 — and lost 1–2.",
 } as const;
