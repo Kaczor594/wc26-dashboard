@@ -186,7 +186,12 @@ export default function RetroPage() {
           </div>
           <div className="retro-bars">
             {SPAIN_PATH.map((m) => (
-              <div className="retro-bar-row" key={m.opponent}>
+              <div
+                className="retro-bar-row"
+                key={m.opponent}
+                tabIndex={0}
+                data-tip={`${m.opponent} · ${m.stage} · Spain ${m.score} — model ${m.modelWinPct != null ? `${m.modelWinPct.toFixed(1)}%` : "no capture"} vs market ${m.marketWinPct.toFixed(1)}%${m.reconstructed ? " · reconstructed, not a live capture" : ""}`}
+              >
                 <span className="retro-bar-label">
                   <span className="stage">{m.stage}</span>
                   {m.opponent}
@@ -303,7 +308,12 @@ export default function RetroPage() {
               </>
             );
             return (
-              <div className="retro-divg-row" key={r.team}>
+              <div
+                className="retro-divg-row"
+                key={r.team}
+                tabIndex={0}
+                data-tip={`${r.team}: ${r.pts} pts vs ${r.xpts.toFixed(2)} xPts (${luck >= 0 ? "+" : "−"}${Math.abs(luck).toFixed(2)})${r.eliminated ? " · eliminated in the group stage" : ""}`}
+              >
                 <div className="retro-divg-half l">
                   {luck < 0 ? (
                     <div className="retro-divg-bar" style={{ width: w }} />

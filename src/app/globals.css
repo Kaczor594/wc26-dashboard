@@ -588,3 +588,48 @@ tr.smx-row > td { padding: 0 10px 14px; }
   .gloss-def:nth-child(2) { border-top: 1px solid var(--line-1); padding-top: 12px; }
   .gloss-xg-row { grid-template-columns: 120px 1fr 36px; }
 }
+
+/* ==== dark-mode fix for the xWDL micro-stack (#5) ===================== */
+/* The raw palette scale (--moss-20/--paper-30/--terra-20) is NOT remapped
+   for dark, so the light-mode xw segments wash into the dark surface as a
+   near-white blur. Re-point them to mid-tones that keep home=green /
+   draw=neutral / away=warm and clear the surface. Validated (dataviz):
+   CVD ΔE 19.2 (>12, no secondary encoding needed), contrast ≥3:1 on the
+   dark card; the low-chroma reading is the natural palette's house style,
+   same as the shipped model bar. Light-mode values are untouched. */
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .prob-bar.xw .ph,
+  :root:not([data-theme="light"]) .gloss-xwdl-key .k.ph { background: var(--moss-30); }
+  :root:not([data-theme="light"]) .prob-bar.xw .pd,
+  :root:not([data-theme="light"]) .gloss-xwdl-key .k.pd { background: var(--stone-40); }
+  :root:not([data-theme="light"]) .prob-bar.xw .pa,
+  :root:not([data-theme="light"]) .gloss-xwdl-key .k.pa { background: var(--terra-20); }
+}
+[data-theme="dark"] .prob-bar.xw .ph,
+[data-theme="dark"] .gloss-xwdl-key .k.ph { background: var(--moss-30); }
+[data-theme="dark"] .prob-bar.xw .pd,
+[data-theme="dark"] .gloss-xwdl-key .k.pd { background: var(--stone-40); }
+[data-theme="dark"] .prob-bar.xw .pa,
+[data-theme="dark"] .gloss-xwdl-key .k.pa { background: var(--terra-20); }
+
+/* ==== CSS-only hover/focus tooltips on the homepage charts (#10) ====== */
+/* The homepage is a static server component (zero client JS); these give
+   the hero Spain-path bars and the diverging luck bars a hover/keyboard
+   detail layer without a client island — the route still prerenders. The
+   tip carries the precise one-decimal values the rounded bars don't show. */
+.retro-bar-row[data-tip], .retro-divg-row[data-tip] { position: relative; cursor: default; }
+.retro-bar-row[data-tip]:focus-visible, .retro-divg-row[data-tip]:focus-visible { outline: 2px solid var(--brand-ring); outline-offset: 2px; border-radius: 3px; }
+.retro-bar-row[data-tip]::after, .retro-divg-row[data-tip]::after {
+  content: attr(data-tip);
+  position: absolute; left: 0; bottom: calc(100% + 6px); z-index: 20;
+  width: max-content; max-width: min(320px, 86vw);
+  background: var(--bg-inverse); color: var(--fg-on-inverse);
+  font-family: var(--font-mono); font-size: 10.5px; line-height: 1.4;
+  padding: 6px 9px; border-radius: 5px; box-shadow: var(--shadow-2);
+  opacity: 0; pointer-events: none; transition: opacity var(--dur-fast) var(--ease-out);
+}
+.retro-bar-row[data-tip]:hover::after, .retro-bar-row[data-tip]:focus-visible::after,
+.retro-divg-row[data-tip]:hover::after, .retro-divg-row[data-tip]:focus-visible::after { opacity: 1; }
+@media (hover: none) { /* touch: don't trap a hover-only tip; focus still works */
+  .retro-bar-row[data-tip]:hover::after, .retro-divg-row[data-tip]:hover::after { opacity: 0; }
+}
