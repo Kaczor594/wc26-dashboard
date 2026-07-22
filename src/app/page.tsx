@@ -193,12 +193,17 @@ export default function RetroPage() {
                 </span>
                 <div className="retro-bar-track">
                   {m.modelWinPct != null && (
-                    <div className="retro-bar-fill focal" style={{ width: `${m.modelWinPct}%` }} />
+                    <div
+                      className={`retro-bar-fill focal${m.reconstructed ? " recon" : ""}`}
+                      style={{ width: `${m.modelWinPct}%` }}
+                      title={m.reconstructed ? "Reconstructed from pre-match ratings — capture missed (network outage), not a live pre-kickoff capture" : undefined}
+                    />
                   )}
                   <div className="retro-bar-tick" style={{ left: `${m.marketWinPct}%` }} />
                 </div>
                 <span className="retro-bar-val">
-                  {m.modelWinPct != null ? `${m.modelWinPct.toFixed(0)}%` : "—"}{" "}
+                  {m.modelWinPct != null ? `${m.modelWinPct.toFixed(0)}%` : "—"}
+                  {m.reconstructed && <span className="recon-mark" title="Reconstructed, not a live capture">†</span>}{" "}
                   <span className="ctx">· {m.marketWinPct.toFixed(0)}%</span>
                 </span>
               </div>
@@ -207,7 +212,7 @@ export default function RetroPage() {
           <div className="retro-legend">
             <span><span className="sw" />Model win probability at kickoff</span>
             <span><span className="sw tick" />Market (vig-free consensus)</span>
-            <span>Uruguay game: no model capture — market only</span>
+            <span>† Uruguay: capture missed (network outage) — value reconstructed from pre-match ratings</span>
           </div>
         </div>
       </Card>
@@ -354,7 +359,7 @@ export default function RetroPage() {
       <Card
         eyebrow="Golden boot"
         title="Mbappé won the boot; Messi, at 38, was the engine"
-        source="Goals: tournament record · xG, xA: Sofascore box scores"
+        source="Goals: tournament record · xG, xA: FotMob per-player tournament totals"
       >
         <div className="table-scroll">
           <table className="mtable">

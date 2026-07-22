@@ -82,7 +82,7 @@ export interface RetroBootRow {
   country: string;
   goals: number;
   minutes: number;
-  gMinusXg: number | null; // null where no Sofascore xG exists (e.g. <180 min)
+  gMinusXg: number | null; // goals − FotMob per-player tournament xG; null if no xG (e.g. <180 min)
 }
 
 export interface RetroPlayerCard {
@@ -99,6 +99,7 @@ export interface RetroPathRow {
   score: string; // display score; final is "1–0 aet"
   modelWinPct: number | null; // null = no capture (market only)
   marketWinPct: number;
+  reconstructed?: boolean; // true = modelWinPct is a leak-safe re-run, not a live pre-kickoff capture
 }
 
 /** By-stage / by-third log-loss comparison — model-vs-market chart series. */

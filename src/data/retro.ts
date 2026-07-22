@@ -51,11 +51,16 @@ export const HERO = {
 } as const;
 
 // Spain's run — the model never had them safe (narrative §3). Model win
-// probs are 90' pre-match captures; Uruguay game had no capture.
+// probs are 90' pre-match captures. The Uruguay group game was never captured
+// (a multi-hour ESPN/DNS outage on 2026-06-26 knocked out lineup fetches across
+// the capture window — matchday.db captured=0, no Wayback snapshot survives);
+// its 56.0 is a leak-safe re-run: both teams' most recent pre-match ratings
+// (6/21 captures, well before kickoff) → the real Dixon-Coles match model. It is
+// a prelim (no-lineup) reconstruction, flagged `reconstructed`, not a live capture.
 export const SPAIN_PATH: RetroPathRow[] = [
   { stage: "Group H", opponent: "Cape Verde", score: "0–0", modelWinPct: 86.9, marketWinPct: 90.8 },
   { stage: "Group H", opponent: "Saudi Arabia", score: "4–0", modelWinPct: 84.5, marketWinPct: 87.9 },
-  { stage: "Group H", opponent: "Uruguay", score: "1–0", modelWinPct: null, marketWinPct: 59.5 },
+  { stage: "Group H", opponent: "Uruguay", score: "1–0", modelWinPct: 56.0, marketWinPct: 59.5, reconstructed: true },
   { stage: "Round of 32", opponent: "Austria", score: "3–0", modelWinPct: 60.7, marketWinPct: 73.8 },
   { stage: "Round of 16", opponent: "Portugal", score: "1–0", modelWinPct: 45.0, marketWinPct: 49.0 },
   { stage: "Quarterfinal", opponent: "Belgium", score: "2–1", modelWinPct: 51.0, marketWinPct: 59.2 },
@@ -315,17 +320,17 @@ export const LUCK_NOTES = {
 // (underwhelmers), §4 (Spain/Argentina engines), §6 (workhorses).
 
 export const GOLDEN_BOOT: RetroBootRow[] = [
-  { player: "Kylian Mbappé", country: "France", goals: 10, minutes: 699, gMinusXg: 4.95 },
-  { player: "Lionel Messi", country: "Argentina", goals: 8, minutes: 740, gMinusXg: 3.6 },
-  { player: "Jude Bellingham", country: "England", goals: 7, minutes: 616, gMinusXg: 5.36 },
-  { player: "Erling Haaland", country: "Norway", goals: 7, minutes: 465, gMinusXg: 4.68 },
-  { player: "Harry Kane", country: "England", goals: 6, minutes: 654, gMinusXg: 3.51 },
-  { player: "Ousmane Dembélé", country: "France", goals: 6, minutes: 597, gMinusXg: 4.48 },
-  { player: "Mikel Oyarzabal", country: "Spain", goals: 5, minutes: 606, gMinusXg: 0.79 },
+  { player: "Kylian Mbappé", country: "France", goals: 10, minutes: 699, gMinusXg: 3.12 },
+  { player: "Lionel Messi", country: "Argentina", goals: 8, minutes: 740, gMinusXg: 2.69 },
+  { player: "Jude Bellingham", country: "England", goals: 7, minutes: 616, gMinusXg: 3.94 },
+  { player: "Erling Haaland", country: "Norway", goals: 7, minutes: 465, gMinusXg: 2.56 },
+  { player: "Harry Kane", country: "England", goals: 6, minutes: 654, gMinusXg: 2.46 },
+  { player: "Ousmane Dembélé", country: "France", goals: 6, minutes: 597, gMinusXg: 3.94 },
+  { player: "Mikel Oyarzabal", country: "Spain", goals: 5, minutes: 606, gMinusXg: 1.0 },
 ];
 
 export const MESSI_NOTE =
-  "Messi at 38: 8 goals, a tournament-best 2.77 expected assists, and 740 minutes — Argentina's entire engine, and the only regular on the squad who clearly outplayed his pre-tournament rating.";
+  "Messi at 38: 8 goals, a tournament-best 4.15 expected assists, and 740 minutes — Argentina's entire engine, and the only regular on the squad who clearly outplayed his pre-tournament rating.";
 
 export const BREAKOUTS: RetroPlayerCard[] = [
   {
@@ -346,8 +351,8 @@ export const UNDERWHELMERS: RetroPlayerCard[] = [
   {
     player: "Michael Olise",
     country: "France",
-    stat: "650 min, 0 goals, −1.71 G−xG",
-    note: "The model's #2-rated player pre-tournament; the chances came, the finishing never did.",
+    stat: "650 min, 0 goals, −2.48 G−xG",
+    note: "The model's #2-rated player pre-tournament and the tournament's single biggest finishing underperformer; the chances came, the finishing never did.",
   },
   {
     player: "Lamine Yamal",
