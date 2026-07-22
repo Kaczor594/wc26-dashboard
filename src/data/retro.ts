@@ -65,7 +65,11 @@ export const SPAIN_PATH: RetroPathRow[] = [
   { stage: "Round of 16", opponent: "Portugal", score: "1–0", modelWinPct: 45.0, marketWinPct: 49.0 },
   { stage: "Quarterfinal", opponent: "Belgium", score: "2–1", modelWinPct: 51.0, marketWinPct: 59.2 },
   { stage: "Semifinal", opponent: "France", score: "2–0", modelWinPct: 32.0, marketWinPct: 30.4 },
-  { stage: "Final", opponent: "Argentina", score: "1–0 aet", modelWinPct: 36.8, marketWinPct: 41.6 },
+  // The final was level at 90' (0–0; Spain won 1–0 in extra time). The model
+  // predicts 90-minute outcomes, so the honest value here is P(draw) — the
+  // regulation result that actually happened — not P(Spain win). Draw odds from
+  // the frozen capture: model 0.3112 / market 0.3189 (performance.json final row).
+  { stage: "Final", opponent: "Argentina", score: "1–0 aet", modelWinPct: 31.1, marketWinPct: 31.9, drawOdds: true },
 ];
 
 /* ---- KPI row ---------------------------------------------------------- */

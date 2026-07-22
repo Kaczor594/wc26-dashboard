@@ -190,7 +190,7 @@ export default function RetroPage() {
                 className="retro-bar-row"
                 key={m.opponent}
                 tabIndex={0}
-                data-tip={`${m.opponent} · ${m.stage} · Spain ${m.score} — model ${m.modelWinPct != null ? `${m.modelWinPct.toFixed(1)}%` : "no capture"} vs market ${m.marketWinPct.toFixed(1)}%${m.reconstructed ? " · reconstructed, not a live capture" : ""}`}
+                data-tip={`${m.opponent} · ${m.stage} · Spain ${m.score} — model ${m.modelWinPct != null ? `${m.modelWinPct.toFixed(1)}%` : "no capture"} vs market ${m.marketWinPct.toFixed(1)}%${m.drawOdds ? " · draw odds — final was level at 90'" : ""}${m.reconstructed ? " · reconstructed, not a live capture" : ""}`}
               >
                 <span className="retro-bar-label">
                   <span className="stage">{m.stage}</span>
@@ -209,7 +209,8 @@ export default function RetroPage() {
                 </div>
                 <span className="retro-bar-val">
                   {m.modelWinPct != null ? `${m.modelWinPct.toFixed(0)}%` : "—"}
-                  {m.reconstructed && <span className="recon-mark" title="Reconstructed, not a live capture">†</span>}{" "}
+                  {m.reconstructed && <span className="recon-mark" title="Reconstructed, not a live capture">†</span>}
+                  {m.drawOdds && <span className="recon-mark" title="Final was level at 90' — odds shown are for the draw, the model's 90-minute outcome">‡</span>}{" "}
                   <span className="ctx">· {m.marketWinPct.toFixed(0)}%</span>
                 </span>
               </div>
@@ -219,6 +220,7 @@ export default function RetroPage() {
             <span><span className="sw" />Model win probability at kickoff</span>
             <span><span className="sw tick" />Market (vig-free consensus)</span>
             <span>† Uruguay: capture missed (network outage) — value reconstructed from pre-match ratings</span>
+            <span>‡ Final: level at 90&apos; — the model predicts 90-minute outcomes, so the odds shown are for the draw</span>
           </div>
         </div>
       </Card>

@@ -100,6 +100,7 @@ export interface RetroPathRow {
   modelWinPct: number | null; // null = no capture (market only)
   marketWinPct: number;
   reconstructed?: boolean; // true = modelWinPct is a leak-safe re-run, not a live pre-kickoff capture
+  drawOdds?: boolean; // true = the pct pair is P(draw), not P(Spain win) — used for the final, level at 90'
 }
 
 /** By-stage / by-third log-loss comparison — model-vs-market chart series. */
